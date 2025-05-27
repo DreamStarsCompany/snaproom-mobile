@@ -1,0 +1,119 @@
+import 'package:flutter/material.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/social_login_button.dart';
+import '../../routes/app_routes.dart';
+
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 40),
+              Column(
+                children: const [
+                  Text(
+                    'Dreamstars',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF3B4F39),
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    'Style Your Space, Your Way.',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: Color(0xFF3B4F39),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 50),
+              const Text(
+                'CREATE YOUR NEW ACCOUNT',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Color(0xFF3F5139),
+                ),
+              ),
+              const SizedBox(height: 30),
+              const CustomTextField(hintText: 'Username', icon: Icons.person),
+              const SizedBox(height: 20),
+              const CustomTextField(
+                hintText: 'Password',
+                icon: Icons.lock,
+                obscureText: true,
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Color(0xFF3B4F39), size: 18),
+                  const SizedBox(width: 6),
+                  const Text('Remember Me'),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Colors.black54, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3B4F39),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+                child: const Text('Register', style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 30),
+              Row(
+                children: const [
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text('Or register with'),
+                  ),
+                  Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const SocialLoginButton(),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Already have an account?'),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.login);
+                    },
+                    child: const Text('Login'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
