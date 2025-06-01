@@ -9,7 +9,7 @@ class SocialLoginButton extends StatelessWidget {
       radius: 25,
       backgroundColor: Colors.white,
       child: Image.asset(
-        'assets/images/google_logo.png',
+        'assets/images/gg_icon.png',
         width: 30,
         height: 30,
       ),
