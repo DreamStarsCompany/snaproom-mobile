@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomerHeader extends StatelessWidget {
-  const CustomerHeader({Key? key}) : super(key: key);
+class DesHeader extends StatelessWidget {
+  const DesHeader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,29 +16,18 @@ class CustomerHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // Logo SnapRoom (text giả lập)
-            Text(
-              'SnapRoom',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                letterSpacing: 1.2,
+            SizedBox(
+              height: 80,  
+              width: 100,
+              child: Image.asset(
+                'assets/images/logo_white.png',
+                fit: BoxFit.contain,
               ),
             ),
 
             // Icons bên phải
             Row(
               children: [
-                // Giỏ hàng
-                IconButton(
-                  onPressed: () {
-                    // Xử lý khi nhấn giỏ hàng
-                  },
-                  icon: const Icon(Icons.shopping_cart),
-                  color: Colors.white,
-                  tooltip: 'Cart',
-                ),
-
                 // Chuông thông báo
                 IconButton(
                   onPressed: () {

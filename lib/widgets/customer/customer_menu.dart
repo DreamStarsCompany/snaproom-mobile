@@ -1,24 +1,48 @@
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart'; // Đảm bảo import route
 
 class CustomerMenu extends StatelessWidget {
   final int selectedIndex;
-  final Function(int) onItemTapped;
 
   const CustomerMenu({
     required this.selectedIndex,
-    required this.onItemTapped,
     Key? key,
   }) : super(key: key);
 
-  Widget _buildNavItem(IconData iconData, String label, int index,
-      {bool hasNotification = false}) {
+  void _handleTap(BuildContext context, int index) {
+    // Chỉ điều hướng nếu chọn mục khác
+    if (index == selectedIndex) return;
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
+        break;
+      case 1:
+        // Navigator.pushReplacementNamed(context, AppRoutes.designerOrders);
+        break;
+      case 2:
+        // Navigator.pushReplacementNamed(context, AppRoutes.designerMessages);
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, AppRoutes.customerProfile);
+        break;
+    }
+  }
+
+  Widget _buildNavItem(
+    BuildContext context,
+    IconData iconData,
+    String label,
+    int index, {
+    bool hasNotification = false,
+  }) {
     bool isSelected = selectedIndex == index;
     final activeColor = const Color(0xFF3F5139);
     final inactiveColor = Colors.grey.shade600;
 
     return Flexible(
       child: InkWell(
-        onTap: () => onItemTapped(index),
+        onTap: () => _handleTap(context, index),
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -26,7 +50,6 @@ class CustomerMenu extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Stack(
-                clipBehavior: Clip.hardEdge,
                 children: [
                   Icon(
                     iconData,
@@ -52,8 +75,6 @@ class CustomerMenu extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: isSelected ? activeColor : inactiveColor,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -98,11 +119,10 @@ class CustomerMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(Icons.home, 'Home', 0),
-            _buildNavItem(Icons.article, 'Designs', 1),
-            _buildNavItem(Icons.view_in_ar, 'AR', 2),
-            _buildNavItem(Icons.message, 'Messages', 3),
-            _buildNavItem(Icons.person, 'Profile', 4),
+            _buildNavItem(context, Icons.home, 'Home', 0),
+            _buildNavItem(context, Icons.article, 'Order', 1),
+            _buildNavItem(context, Icons.message, 'Messages', 2),
+            _buildNavItem(context, Icons.person, 'Profile', 3),
           ],
         ),
       ),

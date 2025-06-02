@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../services/user_service.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../routes/app_routes.dart';
-
-// Thêm import này
-import '../customerHomepage/customer_homepage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +12,72 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   int selectedIndex = 0; // 0: customer, 1: designer
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _isLoading = false;
+
+  void _login() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage("Please fill in all fields");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      print("== LOGIN START ==");
+      print("Email: $email");
+      print("Password: $password");
+      print("Selected index (0=Customer, 1=Designer): $selectedIndex");
+
+      dynamic response;
+      if (selectedIndex == 0) {
+        response = await UserService.loginCustomer(email, password);
+      } else {
+        response = await UserService.loginDesigner(email, password);
+      }
+
+      print("Response from server: $response");
+
+      if (response != null && response['statusCode'] == 200) {
+        _showMessage("Login successful");
+
+        if (selectedIndex == 0) {
+          print("Navigating to Customer Homepage");
+          Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
+        } else {
+          print("Navigating to Designer Dashboard");
+          Navigator.pushReplacementNamed(context, AppRoutes.designerDashboard);
+        }
+      } else {
+        print(
+          "Login failed with message: ${response?['message'] ?? 'No message'}",
+        );
+        _showMessage(response?['message'] ?? "Login failed");
+      }
+    } catch (e) {
+      print("Exception during login: $e");
+      _showMessage("An error occurred: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+      print("== LOGIN END ==");
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,32 +91,20 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 30),
               Column(
-                children: const [
-                  Text(
-                    'SnapRoom',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF3B4F39),
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  SizedBox(height: 6),
-                  Text(
-                    'Style Your Space, Your Way.',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xFF3B4F39),
-                    ),
+                children: [
+                  Image.asset(
+                    'assets/images/full_logo_green.png',
+                    width: 200,
+                    fit: BoxFit.contain,
                   ),
                 ],
               ),
               const SizedBox(height: 50),
               const Text(
-                'LOGIN TO YOUR ACCOUTN',
+                'LOGIN TO YOUR ACCOUNT',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Color(0xFF3F5139),
                 ),
               ),
@@ -64,19 +116,40 @@ class _LoginScreenState extends State<LoginScreen> {
                     selectedIndex = index;
                   });
                 },
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(30),
                 selectedColor: Colors.white,
                 fillColor: const Color(0xFF3B4F39),
                 color: const Color(0xFF3B4F39),
-                textStyle: const TextStyle(fontSize: 12),
-                constraints: const BoxConstraints(minHeight: 36, minWidth: 120),
-                children: const [Text('Customer'), Text('Designer')],
+                splashColor: const Color(0x553B4F39),
+                hoverColor: const Color(0x223B4F39),
+                borderColor: const Color(0xFF3B4F39),
+                borderWidth: 1.5,
+                textStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                constraints: const BoxConstraints(minHeight: 42, minWidth: 120),
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text('Customer'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text('Designer'),
+                  ),
+                ],
               ),
+
               const SizedBox(height: 30),
-              const CustomTextField(
-                hintText: 'Username', icon: Icons.person),
+              CustomTextField(
+                controller: _emailController,
+                hintText: 'Email',
+                icon: Icons.email,
+              ),
               const SizedBox(height: 20),
-              const CustomTextField(
+              CustomTextField(
+                controller: _passwordController,
                 hintText: 'Password',
                 icon: Icons.lock,
                 obscureText: true,
@@ -86,7 +159,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Spacer(),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO: Forgot password logic
+                    },
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.all(
                         Colors.transparent,
@@ -101,22 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (selectedIndex == 0) {
-                    // Điều hướng đến CustomerHomePage
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const CustomerHomePage(),
-                      ),
-                    );
-                  } else {
-                    // Tạm thời chưa xử lý designer
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Designer login not implemented yet')),
-                    );
-                  }
-                },
+                onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF3B4F39),
                   foregroundColor: Colors.white,
@@ -125,10 +185,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                 ),
-                child: const Text('Login', style: TextStyle(fontSize: 16)),
+                child:
+                    _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text('Login', style: TextStyle(fontSize: 16)),
               ),
               const SizedBox(height: 30),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -139,7 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       'Sign up',
-                      style: TextStyle(color: Color(0xFF3B4F39)),),
+                      style: TextStyle(color: Color(0xFF3B4F39)),
+                    ),
                   ),
                 ],
               ),
