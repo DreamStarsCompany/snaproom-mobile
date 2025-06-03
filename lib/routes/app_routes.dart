@@ -7,6 +7,11 @@ import '../screens/designer/designer_profile.dart';
 import '../screens/customer/customer_profile.dart';
 import '../screens/customer/customer_design.dart';
 import '../screens/customer/customer_furniture.dart';
+import '../screens/designer/designer_homepage.dart';
+import '../screens/designer/designer_furniture.dart';
+import '../screens/designer/designer_design.dart';
+import '../screens/designer/designer_order.dart';
+import '../screens/designer/designer_order_detail.dart';
 
 class AppRoutes {
   static const String login = '/';
@@ -17,6 +22,11 @@ class AppRoutes {
   static const String customerProfile = '/customerProfile';
   static const String customerDesign = '/customerDesign';
   static const String customerFurniture = '/customerFurniture';
+  static const String designerHomepage = '/designerHomepage';
+  static const String designerFurniture = '/designerFurniture';
+  static const String designerDesign = '/designerDesign';
+  static const String designerOrder = '/designerOrder';
+  static const String designerOrderDetail = '/designerOrderDetail';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -36,6 +46,18 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CustomerDesign());
       case customerFurniture:
         return MaterialPageRoute(builder: (_) => const CustomerFurniture());
+      case designerHomepage:
+        return MaterialPageRoute(builder: (_) => const DesignerHomepage());
+      case designerFurniture:
+        return MaterialPageRoute(builder: (_) => const DesignerFurniture());
+      case designerDesign:
+        return MaterialPageRoute(builder: (_) => const DesignerDesign());
+      case designerOrder:
+        return MaterialPageRoute(builder: (_) => const DesignerOrder());
+      case designerOrderDetail:
+        final orderId = settings.arguments as String? ?? '';
+        return MaterialPageRoute(builder: (_) => DesignerOrderDetail(orderId: orderId));
+
       default:
         return MaterialPageRoute(
           builder:

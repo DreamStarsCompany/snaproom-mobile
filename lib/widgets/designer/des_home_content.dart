@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';  // sửa lại đúng đường dẫn của bạn
 
-class CusHomeContent extends StatelessWidget {
-  const CusHomeContent({Key? key}) : super(key: key);
+class DesHomeContent extends StatelessWidget {
+  const DesHomeContent({Key? key}) : super(key: key);
 
   static const Color titleColor = Color(0xFF3F5139);
 
@@ -61,7 +61,7 @@ class CusHomeContent extends StatelessWidget {
                         SizedBox(height: 8),
                         Flexible(
                           child: Text(
-                            "Hãy cùng chúng tôi tạo nên không gian sống mơ ước của bạn",
+                            "Hãy để chúng tôi đem thiết kế của bạn đến mọi người",
                             style: TextStyle(color: Colors.white, fontSize: 13),
                             softWrap: true,
                             overflow: TextOverflow.ellipsis,
@@ -90,27 +90,27 @@ class CusHomeContent extends StatelessWidget {
               children: [
                 _buildMenuItem(
                   context,
+                  'assets/images/cus_home_des.png',
+                  'THỐNG KÊ',
+                  AppRoutes.designerDashboard,
+                ),
+                _buildMenuItem(
+                  context,
                   'assets/images/cus_home_fur.png',
                   'NỘI THẤT',
-                  AppRoutes.customerFurniture,
+                  AppRoutes.designerFurniture,
                 ),
                 _buildMenuItem(
                   context,
                   'assets/images/cus_home_inter.png',
                   'BẢN VẼ',
-                  AppRoutes.customerDesign,
-                ),
-                _buildMenuItem(
-                  context,
-                  'assets/images/cus_home_des.png',
-                  'THIẾT KẾ',
-                  AppRoutes.customerDesign,
+                  AppRoutes.designerDesign,
                 ),
                 _buildMenuItem(
                   context,
                   'assets/images/cus_home_connect.png',
                   'LIÊN HỆ',
-                  AppRoutes.customerDesign,
+                  AppRoutes.designerDashboard,
                 ),
               ],
             ),
@@ -175,11 +175,11 @@ class CusHomeContent extends StatelessWidget {
   }
 
   Widget _buildMenuItem(
-    BuildContext context,
-    String imagePath,
-    String title,
-    String route,
-  ) {
+      BuildContext context,
+      String imagePath,
+      String title,
+      String route,
+      ) {
     return GestureDetector(
       onTap: () {
         Navigator.pushReplacementNamed(context, route);

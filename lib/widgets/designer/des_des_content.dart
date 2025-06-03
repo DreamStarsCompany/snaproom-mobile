@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 
-class CusDesContent extends StatefulWidget {
-  const CusDesContent({Key? key}) : super(key: key);
+class DesDesContent extends StatefulWidget {
+  const DesDesContent({Key? key}) : super(key: key);
 
   @override
-  State<CusDesContent> createState() => _CusDesContentState();
+  State<DesDesContent> createState() => _DesDesContentState();
 }
 
-class _CusDesContentState extends State<CusDesContent> {
+class _DesDesContentState extends State<DesDesContent> {
   List<dynamic> _designs = [];
   String _sortBy = 'price';
   bool _isAscending = true;
@@ -21,7 +21,7 @@ class _CusDesContentState extends State<CusDesContent> {
   }
 
   Future<void> _fetchDesigns() async {
-    final response = await UserService.getAllDesigns();
+    final response = await UserService.getAllDesignsByDes();
     if (response != null && response['data'] != null) {
       setState(() {
         _designs = response['data']['items'];
@@ -80,7 +80,7 @@ class _CusDesContentState extends State<CusDesContent> {
           splashColor: Colors.grey.withOpacity(0.3),
           highlightColor: Colors.transparent,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
+            Navigator.pushReplacementNamed(context, AppRoutes.designerHomepage);
           },
         ),
       ),

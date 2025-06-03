@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/user_service.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../routes/app_routes.dart';
@@ -47,14 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Response from server: $response");
 
       if (response != null && response['statusCode'] == 200) {
+        final token = response['data']; // Đây là chuỗi token JWT
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token); // Lưu lại để dùng sau
         _showMessage("Login successful");
 
         if (selectedIndex == 0) {
           print("Navigating to Customer Homepage");
           Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
         } else {
-          print("Navigating to Designer Dashboard");
-          Navigator.pushReplacementNamed(context, AppRoutes.designerDashboard);
+          print("Navigating to Designer Homepage");
+          Navigator.pushReplacementNamed(context, AppRoutes.designerHomepage);
         }
       } else {
         print(

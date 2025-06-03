@@ -15,10 +15,10 @@ class DesMenu extends StatelessWidget {
 
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, AppRoutes.designerDashboard);
+        Navigator.pushReplacementNamed(context, AppRoutes.designerHomepage);
         break;
       case 1:
-        // Navigator.pushReplacementNamed(context, AppRoutes.designerOrders);
+        Navigator.pushReplacementNamed(context, AppRoutes.designerOrder);
         break;
       case 2:
         // Navigator.pushReplacementNamed(context, AppRoutes.designerMessages);
@@ -119,7 +119,7 @@ class DesMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(context, Icons.home, 'Dashboard', 0),
+            _buildNavItem(context, Icons.home, 'Home', 0),
             _buildNavItem(context, Icons.article, 'Order', 1),
             _buildNavItem(context, Icons.message, 'Messages', 2),
             _buildNavItem(context, Icons.person, 'Profile', 3),

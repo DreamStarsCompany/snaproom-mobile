@@ -2,13 +2,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
 import 'package:flutter/material.dart';
 
 class ApiService {
   static Future<String?> getToken() async {
-    // TODO: Nếu dùng SharedPreferences thì load token từ đó
-    return null; // return "your_token_here";
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
   }
 
   static Future<dynamic> get(String endpoint, {Map<String, String>? params}) async {

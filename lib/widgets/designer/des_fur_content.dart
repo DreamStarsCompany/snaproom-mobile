@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 
-class CusFurContent extends StatefulWidget {
-  const CusFurContent({Key? key}) : super(key: key);
+class DesFurContent extends StatefulWidget {
+  const DesFurContent({Key? key}) : super(key: key);
 
   @override
-  State<CusFurContent> createState() => __CusFurContentState();
+  State<DesFurContent> createState() => __DesFurContentState();
 }
 
-class __CusFurContentState extends State<CusFurContent> {
+class __DesFurContentState extends State<DesFurContent> {
   List<dynamic> _designs = [];
   String _sortBy = 'price';
   bool _isAscending = true;
@@ -21,7 +21,7 @@ class __CusFurContentState extends State<CusFurContent> {
   }
 
   Future<void> _fetchFurnitures() async {
-    final response = await UserService.getAllFurnitures();
+    final response = await UserService.getAllFurnituresByDes();
     if (response != null && response['data'] != null) {
       setState(() {
         _designs = response['data']['items'];
@@ -83,7 +83,7 @@ class __CusFurContentState extends State<CusFurContent> {
           highlightColor: Colors.transparent,
           onPressed: () {
             Navigator.pushReplacementNamed(
-                context, AppRoutes.customerHomepage);
+                context, AppRoutes.designerHomepage);
           },
         ),
       ),
