@@ -12,6 +12,9 @@ import '../screens/designer/designer_furniture.dart';
 import '../screens/designer/designer_design.dart';
 import '../screens/designer/designer_order.dart';
 import '../screens/designer/designer_order_detail.dart';
+import '../screens/customer/customer_order.dart';
+import '../screens/customer/customer_order_detail.dart';
+import '../screens/customer/customer_fur_detail.dart';
 
 class AppRoutes {
   static const String login = '/';
@@ -27,6 +30,10 @@ class AppRoutes {
   static const String designerDesign = '/designerDesign';
   static const String designerOrder = '/designerOrder';
   static const String designerOrderDetail = '/designerOrderDetail';
+  static const String customerOrder = '/customerOrder';
+  static const String customerOrderDetail = '/customerOrderDetail';
+  static const String customerFurDetail = '/customerFurDetail';
+
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -50,6 +57,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const DesignerHomepage());
       case designerFurniture:
         return MaterialPageRoute(builder: (_) => const DesignerFurniture());
+      case customerFurDetail:
+        final product = settings.arguments as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(builder: (_) => CustomerFurDetail(product: product),);
       case designerDesign:
         return MaterialPageRoute(builder: (_) => const DesignerDesign());
       case designerOrder:
@@ -57,6 +67,11 @@ class AppRoutes {
       case designerOrderDetail:
         final orderId = settings.arguments as String? ?? '';
         return MaterialPageRoute(builder: (_) => DesignerOrderDetail(orderId: orderId));
+      case customerOrder:
+        return MaterialPageRoute(builder: (_) => const CustomerOrder());
+      case customerOrderDetail:
+        final orderId = settings.arguments as String? ?? '';
+        return MaterialPageRoute(builder: (_) => CustomerOrderDetail(orderId: orderId));
 
       default:
         return MaterialPageRoute(

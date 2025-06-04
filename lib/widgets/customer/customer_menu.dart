@@ -18,7 +18,7 @@ class CustomerMenu extends StatelessWidget {
         Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
         break;
       case 1:
-        // Navigator.pushReplacementNamed(context, AppRoutes.designerOrders);
+        Navigator.pushReplacementNamed(context, AppRoutes.customerOrder);
         break;
       case 2:
         // Navigator.pushReplacementNamed(context, AppRoutes.designerMessages);
@@ -119,10 +119,10 @@ class CustomerMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(context, Icons.home, 'Home', 0),
-            _buildNavItem(context, Icons.article, 'Order', 1),
-            _buildNavItem(context, Icons.message, 'Messages', 2),
-            _buildNavItem(context, Icons.person, 'Profile', 3),
+            _buildNavItem(context, Icons.home, 'Trang chủ', 0),
+            _buildNavItem(context, Icons.article, 'Đơn hàng', 1),
+            _buildNavItem(context, Icons.message, 'Trò chuyện', 2),
+            _buildNavItem(context, Icons.person, 'Hồ sơ', 3),
           ],
         ),
       ),

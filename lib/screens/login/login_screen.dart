@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      _showMessage("Please fill in all fields");
+      _showMessage("Vui lòng nhập đủ thông tin");
       return;
     }
 
@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final token = response['data']; // Đây là chuỗi token JWT
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token); // Lưu lại để dùng sau
-        _showMessage("Login successful");
+        _showMessage("Đăng nhập thành công");
 
         if (selectedIndex == 0) {
           print("Navigating to Customer Homepage");
@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 50),
               const Text(
-                'LOGIN TO YOUR ACCOUNT',
+                'ĐĂNG NHẬP',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -136,11 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: const [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('Customer'),
+                    child: Text('Khách hàng'),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('Designer'),
+                    child: Text('Nhà thiết kế'),
                   ),
                 ],
               ),
@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               CustomTextField(
                 controller: _passwordController,
-                hintText: 'Password',
+                hintText: 'Mật khẩu',
                 icon: Icons.lock,
                 obscureText: true,
               ),
@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Forgot Password?',
+                      'Quên mật khẩu?',
                       style: TextStyle(color: Colors.black54, fontSize: 12),
                     ),
                   ),
@@ -192,19 +192,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 child:
                     _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Login', style: TextStyle(fontSize: 16)),
+                        : const Text('Đăng nhập', style: TextStyle(fontSize: 16)),
               ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don't have an account?"),
+                  const Text("Chưa có tài khoản?"),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, AppRoutes.register);
                     },
                     child: const Text(
-                      'Sign up',
+                      'Đăng ký',
                       style: TextStyle(color: Color(0xFF3B4F39)),
                     ),
                   ),

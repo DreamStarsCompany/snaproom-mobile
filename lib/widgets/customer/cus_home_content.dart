@@ -103,13 +103,13 @@ class CusHomeContent extends StatelessWidget {
                 _buildMenuItem(
                   context,
                   'assets/images/cus_home_des.png',
-                  'THIẾT KẾ',
+                  'NHÀ THIẾT KẾ',
                   AppRoutes.customerDesign,
                 ),
                 _buildMenuItem(
                   context,
                   'assets/images/cus_home_connect.png',
-                  'LIÊN HỆ',
+                  'TRÒ CHUYỆN',
                   AppRoutes.customerDesign,
                 ),
               ],
@@ -161,9 +161,9 @@ class CusHomeContent extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildIconWithTitle(Icons.verified, 'Verified'),
-                _buildIconWithTitle(Icons.thumb_up, 'Trusted'),
-                _buildIconWithTitle(Icons.support_agent, 'Support'),
+                _buildIconWithTitle(Icons.verified, 'Được chứng nhận'),
+                _buildIconWithTitle(Icons.thumb_up, 'Đáng tin cậy'),
+                _buildIconWithTitle(Icons.support_agent, 'Luôn hỗ trợ'),
               ],
             ),
           ),

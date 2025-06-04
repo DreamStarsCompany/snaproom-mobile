@@ -19,13 +19,16 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
 
   Future<void> registerCustomer() async {
     if (passwordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Passwords do not match")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
       return;
     }
 
     setState(() => isLoading = true);
+
+    // Lưu ScaffoldMessengerState tại thời điểm còn hợp lệ
+    final messenger = ScaffoldMessenger.of(context);
 
     try {
       final response = await UserService.registerCustomer(
@@ -34,16 +37,18 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
         password: passwordController.text.trim(),
       );
 
-      // In log để xem phản hồi trả về từ server
+      if (!mounted) return;
+
       debugPrint('✅ Registration response: $response');
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         const SnackBar(content: Text("Registration successful")),
       );
     } catch (e) {
+      if (!mounted) return;
+
       debugPrint('❌ Registration error: $e');
 
-      // Nếu e là DioError, in thêm response nếu có
       if (e is Exception && e.toString().contains("DioError")) {
         try {
           final error = e as dynamic;
@@ -51,14 +56,15 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
         } catch (_) {}
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text("Registration failed: $e")),
       );
     } finally {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +72,7 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
       children: [
         CustomTextField(
           controller: usernameController,
-          hintText: 'Username',
+          hintText: 'Tên người dùng',
           icon: Icons.person,
         ),
         const SizedBox(height: 16),
@@ -78,14 +84,14 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
         const SizedBox(height: 16),
         CustomTextField(
           controller: passwordController,
-          hintText: 'Password',
+          hintText: 'Mật khẩu',
           icon: Icons.lock,
           obscureText: true,
         ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: confirmPasswordController,
-          hintText: 'Confirm Password',
+          hintText: 'Xác nhận mật khẩu',
           icon: Icons.lock,
           obscureText: true,
         ),
@@ -100,9 +106,10 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
               borderRadius: BorderRadius.circular(25),
             ),
           ),
-          child: isLoading
-              ? const CircularProgressIndicator(color: Colors.white)
-              : const Text('Register', style: TextStyle(fontSize: 16)),
+          child:
+              isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Đăng ký', style: TextStyle(fontSize: 16)),
         ),
       ],
     );

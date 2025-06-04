@@ -3,16 +3,16 @@ import 'package:intl/intl.dart';
 import '../../services/user_service.dart';
 import '../../routes/app_routes.dart'; // nhớ import AppRoutes
 
-class DesOrderDetailContent extends StatefulWidget {
+class CusOrderDetailContent extends StatefulWidget {
   final String orderId;
 
-  const DesOrderDetailContent({Key? key, required this.orderId}) : super(key: key);
+  const CusOrderDetailContent({Key? key, required this.orderId}) : super(key: key);
 
   @override
-  State<DesOrderDetailContent> createState() => _DesOrderDetailContentState();
+  State<CusOrderDetailContent> createState() => _CusOrderDetailContentState();
 }
 
-class _DesOrderDetailContentState extends State<DesOrderDetailContent> {
+class _CusOrderDetailContentState extends State<CusOrderDetailContent> {
   dynamic orderData;
   bool isLoading = true;
 
@@ -46,7 +46,7 @@ class _DesOrderDetailContentState extends State<DesOrderDetailContent> {
           splashColor: Colors.grey.withOpacity(0.3),
           highlightColor: Colors.transparent,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, AppRoutes.designerOrder);
+            Navigator.pushReplacementNamed(context, AppRoutes.customerOrder);
           },
         ),
       ),

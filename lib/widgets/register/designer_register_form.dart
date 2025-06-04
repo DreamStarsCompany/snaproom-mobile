@@ -55,7 +55,7 @@ class _DesignerRegisterFormState extends State<DesignerRegisterForm> {
       children: [
         CustomTextField(
           controller: usernameController,
-          hintText: 'Username',
+          hintText: 'Tên người dùng',
           icon: Icons.person,
         ),
         const SizedBox(height: 16),
@@ -67,14 +67,14 @@ class _DesignerRegisterFormState extends State<DesignerRegisterForm> {
         const SizedBox(height: 16),
         CustomTextField(
           controller: passwordController,
-          hintText: 'Password',
+          hintText: 'Mật khẩu',
           icon: Icons.lock,
           obscureText: true,
         ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: confirmPasswordController,
-          hintText: 'Confirm Password',
+          hintText: 'Xác nhận mật khẩu',
           icon: Icons.lock,
           obscureText: true,
         ),
@@ -97,7 +97,7 @@ class _DesignerRegisterFormState extends State<DesignerRegisterForm> {
           ),
           child: isLoading
               ? const CircularProgressIndicator(color: Colors.white)
-              : const Text('Register', style: TextStyle(fontSize: 16)),
+              : const Text('Đăng ký', style: TextStyle(fontSize: 16)),
         ),
       ],
     );

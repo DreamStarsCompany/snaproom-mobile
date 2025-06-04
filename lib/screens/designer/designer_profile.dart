@@ -31,7 +31,7 @@ class DesignerProfile extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: () => _logout(context),
             icon: const Icon(Icons.logout),
-            label: const Text('Logout'),
+            label: const Text('Đăng xuất'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               backgroundColor: Colors.redAccent,

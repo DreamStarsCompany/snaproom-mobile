@@ -51,6 +51,13 @@ class UserService {
     });
   }
 
+  static Future<dynamic> getAllOrdersByCus({int pageNumber = -1, int pageSize = -1}) async {
+    return await ApiService.get("/api/customer/orders", params: {
+      "pageNumber": pageNumber.toString(),
+      "pageSize": pageSize.toString(),
+    });
+  }
+
   static Future<dynamic> getOrderById({required String id}) async {
     return await ApiService.get("/api/orders/$id");
   }
@@ -87,6 +94,9 @@ class UserService {
     );
   }
 
+  static Future<dynamic> getProductById(String id) async {
+    return await ApiService.get("/api/products/$id");
+  }
 
 
 }

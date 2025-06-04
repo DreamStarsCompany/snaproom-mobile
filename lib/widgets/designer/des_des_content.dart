@@ -52,18 +52,73 @@ class _DesDesContentState extends State<DesDesContent> {
     });
   }
 
-  Widget _buildSortButton(String label, String field) {
+  Widget _buildSortButton(
+      String label,
+      String field, {
+        bool isFirst = false,
+        bool isLast = false,
+      }) {
+    final bool isActive = _sortBy == field;
     IconData icon = Icons.arrow_downward;
-    if (_sortBy == field) {
+    if (isActive) {
       icon = _isAscending ? Icons.arrow_upward : Icons.arrow_downward;
     }
 
-    return TextButton.icon(
-      onPressed: () => _onSortChange(field),
-      icon: Icon(icon, size: 16),
-      label: Text(label),
-      style: TextButton.styleFrom(
-        foregroundColor: _sortBy == field ? Colors.green : Colors.black87,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border(
+          right:
+          isLast
+              ? BorderSide.none
+              : BorderSide(color: Colors.grey.shade300, width: 1),
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: isFirst ? Radius.circular(12) : Radius.zero,
+          bottomLeft: isFirst ? Radius.circular(12) : Radius.zero,
+          topRight: isLast ? Radius.circular(12) : Radius.zero,
+          bottomRight: isLast ? Radius.circular(12) : Radius.zero,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.only(
+            topLeft: isFirst ? Radius.circular(12) : Radius.zero,
+            bottomLeft: isFirst ? Radius.circular(12) : Radius.zero,
+            topRight: isLast ? Radius.circular(12) : Radius.zero,
+            bottomRight: isLast ? Radius.circular(12) : Radius.zero,
+          ),
+          onTap: () => _onSortChange(field),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isActive ? Colors.green : Colors.black87,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Icon(
+                  icon,
+                  size: 16,
+                  color: isActive ? Colors.green : Colors.black54,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -93,11 +148,11 @@ class _DesDesContentState extends State<DesDesContent> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildSortButton('Giá', 'price'),
+                  _buildSortButton('Giá', 'price', isFirst: true),
                   const SizedBox(width: 12),
                   _buildSortButton('Lượt mua', 'purchaseCount'),
                   const SizedBox(width: 12),
-                  _buildSortButton('Đánh giá', 'rating'),
+                  _buildSortButton('Đánh giá', 'rating', isLast: true),
                 ],
               ),
             ),
@@ -114,8 +169,7 @@ class _DesDesContentState extends State<DesDesContent> {
                 final price = item['price'] ?? 0;
                 final rating = item['rating'] ?? 0;
                 final purchaseCount = item['purchaseCount'] ?? 0;
-                final imageSource =
-                item['image'] != null ? item['image']['imageSource'] : null;
+                final imageSource = item['primaryImage']?['imageSource'];
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -142,22 +196,26 @@ class _DesDesContentState extends State<DesDesContent> {
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
                             ),
-                            child: imageSource != null && imageSource.isNotEmpty
-                                ? Image.network(
-                              imageSource,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            )
-                                : Container(
-                              color: Colors.grey[300],
-                              child: const Icon(
-                                Icons.image_not_supported,
-                                size: 50,
-                                color: Colors.white54,
+                            child: Container(
+                              color: const Color(0xFFBCD4B5),
+                              child: imageSource != null && imageSource.isNotEmpty
+                                  ? Image.network(
+                                imageSource,
+                                width: double.infinity,
+                                fit: BoxFit.contain,
+                              )
+                                  : Container(
+                                color: Colors.grey[300],
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  size: 50,
+                                  color: Colors.white54,
+                                ),
                               ),
                             ),
                           ),
                         ),
+
                         Expanded(
                           flex: 2, // Tỉ lệ 2 phần nội dung
                           child: Padding(
@@ -189,7 +247,10 @@ class _DesDesContentState extends State<DesDesContent> {
                                       size: 18,
                                     ),
                                     const SizedBox(width: 4),
-                                    Text('$rating', style: const TextStyle(fontSize: 14)),
+                                    Text(
+                                      '$rating',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
                                   ],
                                 ),
                               ],
@@ -199,7 +260,6 @@ class _DesDesContentState extends State<DesDesContent> {
                       ],
                     ),
                   ),
-
                 );
               },
             ),

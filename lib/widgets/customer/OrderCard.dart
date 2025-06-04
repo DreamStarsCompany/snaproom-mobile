@@ -11,8 +11,6 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final id = order['id'] ?? 'N/A';
     final status = order['status'] ?? 'Unknown';
-    final name = order['customer']?['name'] ?? 'Unknown';
-
 
     final rawPrice = order['orderPrice'];
     final price = (rawPrice is int || rawPrice is double)
@@ -31,7 +29,7 @@ class OrderCard extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(
           context,
-          AppRoutes.designerOrderDetail,
+          AppRoutes.customerOrderDetail,
           arguments: id,
         );
       },
@@ -56,8 +54,6 @@ class OrderCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Mã đơn: $id", style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text("Người mua: $name"),
             const SizedBox(height: 4),
             Text("Tổng giá: ${currencyFormatter.format(price)}"),
             const SizedBox(height: 4),

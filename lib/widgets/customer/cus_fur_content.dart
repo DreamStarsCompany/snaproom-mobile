@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 import '../../services/user_service.dart';
+import '../../screens/customer/customer_fur_detail.dart';
 
 class CusFurContent extends StatefulWidget {
   const CusFurContent({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class __CusFurContentState extends State<CusFurContent> {
     if (response != null && response['data'] != null) {
       setState(() {
         _designs = response['data']['items'];
-        _applySorting(); // Sắp xếp khi load lần đầu
+        _applySorting();
       });
     }
   }
@@ -45,30 +46,80 @@ class __CusFurContentState extends State<CusFurContent> {
   void _onSortChange(String field) {
     setState(() {
       if (_sortBy == field) {
-        _isAscending = !_isAscending; // Đảo chiều nếu chọn cùng loại
+        _isAscending = !_isAscending;
       } else {
         _sortBy = field;
-        _isAscending = true; // Mặc định tăng dần khi đổi field
+        _isAscending = true;
       }
       _applySorting();
     });
   }
 
-  Widget _buildSortButton(String label, String field) {
+  Widget _buildSortButton(String label, String field, {bool isFirst = false, bool isLast = false}) {
+    final bool isActive = _sortBy == field;
     IconData icon = Icons.arrow_downward;
-    if (_sortBy == field) {
+    if (isActive) {
       icon = _isAscending ? Icons.arrow_upward : Icons.arrow_downward;
     }
 
-    return TextButton.icon(
-      onPressed: () => _onSortChange(field),
-      icon: Icon(icon, size: 16),
-      label: Text(label),
-      style: TextButton.styleFrom(
-        foregroundColor: _sortBy == field ? Colors.green : Colors.black87,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border(
+          right: isLast
+              ? BorderSide.none
+              : BorderSide(color: Colors.grey.shade300, width: 1),
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: isFirst ? Radius.circular(12) : Radius.zero,
+          bottomLeft: isFirst ? Radius.circular(12) : Radius.zero,
+          topRight: isLast ? Radius.circular(12) : Radius.zero,
+          bottomRight: isLast ? Radius.circular(12) : Radius.zero,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.only(
+            topLeft: isFirst ? Radius.circular(12) : Radius.zero,
+            bottomLeft: isFirst ? Radius.circular(12) : Radius.zero,
+            topRight: isLast ? Radius.circular(12) : Radius.zero,
+            bottomRight: isLast ? Radius.circular(12) : Radius.zero,
+          ),
+          onTap: () => _onSortChange(field),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isActive ? Colors.green : Colors.black87,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Icon(
+                  icon,
+                  size: 16,
+                  color: isActive ? Colors.green : Colors.black54,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -79,17 +130,13 @@ class __CusFurContentState extends State<CusFurContent> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          splashColor: Colors.grey.withOpacity(0.3),
-          highlightColor: Colors.transparent,
           onPressed: () {
-            Navigator.pushReplacementNamed(
-                context, AppRoutes.customerHomepage);
+            Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
           },
         ),
       ),
       body: Column(
         children: [
-          // Bộ lọc sắp xếp
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: SingleChildScrollView(
@@ -105,8 +152,6 @@ class __CusFurContentState extends State<CusFurContent> {
               ),
             ),
           ),
-
-          // Danh sách sản phẩm
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(16),
@@ -114,97 +159,118 @@ class __CusFurContentState extends State<CusFurContent> {
                 crossAxisCount: 2,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                childAspectRatio: 0.75,
+                childAspectRatio: 0.75, // làm thẻ cao hơn
               ),
               itemCount: _designs.length,
               itemBuilder: (context, index) {
                 final item = _designs[index];
+                final id = item['id'];
                 final name = item['name'] ?? '';
                 final price = item['price'] ?? 0;
                 final rating = item['rating'] ?? 0;
-                final purchaseCount = item['purchaseCount'] ?? 0;
-                final imageSource = item['image']?['imageSource'];
+                final imageSource = item['primaryImage']?['imageSource'];
 
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
+                return GestureDetector(
+                  onTap: () async {
+                    final response = await UserService.getProductById(id);
+                    if (response != null && response['data'] != null) {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.customerFurDetail,
+                        arguments: response['data'],
+                      );
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
                         ),
-                        child: imageSource != null && imageSource.isNotEmpty
-                            ? Image.network(
-                          imageSource,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        )
-                            : Container(
-                          height: 150,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 40,
-                            color: Colors.white54,
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          height: 160,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFBCD4B5), // nền xanh nhạt
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                          ),
+                          child: imageSource != null && imageSource.isNotEmpty
+                              ? ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            child: Image.network(
+                              imageSource,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                              : const Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                              color: Colors.white54,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                'Giá: ${price.toString()}đ',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.star,
-                                    color: Colors.orange,
-                                    size: 14,
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '$rating',
-                                    style: const TextStyle(fontSize: 12),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Giá: ${price.toString()}đ',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 11,
                                   ),
-                                ],
-                              ),
-                            ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.orange,
+                                      size: 12,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '$rating',
+                                      style: const TextStyle(fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },

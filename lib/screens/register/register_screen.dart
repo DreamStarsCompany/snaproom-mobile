@@ -30,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 50),
               const Text(
-                'CREATE NEW ACCOUNT',
+                'TẠO TÀI KHOẢN',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -59,11 +59,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: const [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('Customer'),
+                    child: Text('Khách hàng'),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('Designer'),
+                    child: Text('Nhà thiết kế'),
                   ),
                 ],
               ),
@@ -79,13 +79,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Already have an account?'),
+                  const Text('Đã có tài khoản?'),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, AppRoutes.login);
                     },
                     child: const Text(
-                      'Login',
+                      'Đăng nhập',
                       style: TextStyle(color: Color(0xFF3B4F39)),
                     ),
                   ),

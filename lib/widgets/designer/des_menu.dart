@@ -119,10 +119,10 @@ class DesMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(context, Icons.home, 'Home', 0),
-            _buildNavItem(context, Icons.article, 'Order', 1),
-            _buildNavItem(context, Icons.message, 'Messages', 2),
-            _buildNavItem(context, Icons.person, 'Profile', 3),
+            _buildNavItem(context, Icons.home, 'Trang chủ', 0),
+            _buildNavItem(context, Icons.article, 'Đơn hàng', 1),
+            _buildNavItem(context, Icons.message, 'Trò chuyện', 2),
+            _buildNavItem(context, Icons.person, 'Hồ sơ', 3),
           ],
         ),
       ),
