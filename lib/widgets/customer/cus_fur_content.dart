@@ -159,7 +159,7 @@ class __CusFurContentState extends State<CusFurContent> {
                 crossAxisCount: 2,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                childAspectRatio: 0.75, // làm thẻ cao hơn
+                childAspectRatio: 0.75,
               ),
               itemCount: _designs.length,
               itemBuilder: (context, index) {

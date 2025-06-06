@@ -15,6 +15,7 @@ import '../screens/designer/designer_order_detail.dart';
 import '../screens/customer/customer_order.dart';
 import '../screens/customer/customer_order_detail.dart';
 import '../screens/customer/customer_fur_detail.dart';
+import '../screens/customer/customer_des_detail.dart';
 import '../screens/customer/customer_cart.dart';
 
 class AppRoutes {
@@ -34,6 +35,7 @@ class AppRoutes {
   static const String customerOrder = '/customerOrder';
   static const String customerOrderDetail = '/customerOrderDetail';
   static const String customerFurDetail = '/customerFurDetail';
+  static const String customerDesDetail = '/customerDesDetail';
   static const String customerCart = '/customerCart';
 
 
@@ -62,6 +64,9 @@ class AppRoutes {
       case customerFurDetail:
         final product = settings.arguments as Map<String, dynamic>? ?? {};
         return MaterialPageRoute(builder: (_) => CustomerFurDetail(product: product),);
+      case customerDesDetail:
+        final product = settings.arguments as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(builder: (_) => CustomerDesDetail(product: product),);
       case designerDesign:
         return MaterialPageRoute(builder: (_) => const DesignerDesign());
       case designerOrder:

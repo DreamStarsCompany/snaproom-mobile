@@ -171,93 +171,112 @@ class _CusDesContentState extends State<CusDesContent> {
                 final purchaseCount = item['purchaseCount'] ?? 0;
                 final imageSource = item['primaryImage']?['imageSource'];
 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: SizedBox(
-                    height: 300, // Chiều cao tổng thể của card
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          flex: 4, // Tỉ lệ 3 phần ảnh
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12),
-                            ),
-                            child: Container(
-                              color: const Color(0xFFBCD4B5),
-                              child: imageSource != null && imageSource.isNotEmpty
-                                  ? Image.network(
-                                imageSource,
-                                width: double.infinity,
-                                fit: BoxFit.contain,
-                              )
-                                  : Container(
-                                color: Colors.grey[300],
-                                child: const Icon(
-                                  Icons.image_not_supported,
-                                  size: 50,
-                                  color: Colors.white54,
-                                ),
+                return GestureDetector(
+                  onTap: () async {
+                    final id = item['id'];
+                    final response = await UserService.getProductById(
+                      id,
+                    );
+                    if (response != null && response['data'] != null) {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.customerDesDetail,
+                        //
+                        arguments:
+                            response['data'],
+                      );
+                    }
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: SizedBox(
+                      height: 300,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            flex: 4, // Tỉ lệ 3 phần ảnh
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                              ),
+                              child: Container(
+                                color: const Color(0xFFBCD4B5),
+                                child:
+                                    imageSource != null &&
+                                            imageSource.isNotEmpty
+                                        ? Image.network(
+                                          imageSource,
+                                          width: double.infinity,
+                                          fit: BoxFit.contain,
+                                        )
+                                        : Container(
+                                          color: Colors.grey[300],
+                                          child: const Icon(
+                                            Icons.image_not_supported,
+                                            size: 50,
+                                            color: Colors.white54,
+                                          ),
+                                        ),
                               ),
                             ),
                           ),
-                        ),
 
-                        Expanded(
-                          flex: 2, // Tỉ lệ 2 phần nội dung
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Giá: ${price.toString()}đ',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.star,
-                                      color: Colors.orange,
-                                      size: 18,
+                          Expanded(
+                            flex: 2, // Tỉ lệ 2 phần nội dung
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
                                     ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '$rating',
-                                      style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Giá: ${price.toString()}đ',
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14,
                                     ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.star,
+                                        color: Colors.orange,
+                                        size: 18,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '$rating',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );

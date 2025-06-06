@@ -109,5 +109,14 @@ class UserService {
     return await ApiService.get("/api/products/$id");
   }
 
+  static Future<dynamic> removeFromCart(String productId) async {
+    return await ApiService.delete(
+      "/api/cart",
+      params: {
+        "productId": productId,
+      },
+    );
+  }
+
 
 }

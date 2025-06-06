@@ -24,8 +24,8 @@ class BuyMenu extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.zero,
-        highlightColor: borderColor.withOpacity(0.3), // màu nền khi bấm giữ
-        splashColor: borderColor.withOpacity(0.1), // hiệu ứng ripple
+        highlightColor: borderColor.withOpacity(0.3),
+        splashColor: borderColor.withOpacity(0.1),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,

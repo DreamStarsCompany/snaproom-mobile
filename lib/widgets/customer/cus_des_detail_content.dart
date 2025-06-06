@@ -3,27 +3,27 @@ import '../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 import 'buy_menu.dart';
 
-class CusFurDetailContent extends StatefulWidget {
+class CusDesDetail extends StatefulWidget {
   final Map<String, dynamic> product;
 
-  const CusFurDetailContent({Key? key, required this.product}) : super(key: key);
+  const CusDesDetail({Key? key, required this.product}) : super(key: key);
 
   @override
-  State<CusFurDetailContent> createState() => _CusFurDetailContentState();
+  State<CusDesDetail> createState() => _CusDesDetailState();
 }
 
-class _CusFurDetailContentState extends State<CusFurDetailContent> {
+class _CusDesDetailState extends State<CusDesDetail> {
   List<dynamic> _furs = [];
   int _quantity = 1;
 
   @override
   void initState() {
     super.initState();
-    _fetchFurnitures();
+    _fetchDesigns();
   }
 
-  Future<void> _fetchFurnitures() async {
-    final response = await UserService.getAllFurnitures();
+  Future<void> _fetchDesigns() async {
+    final response = await UserService.getAllDesigns();
     if (response != null && response['data'] != null) {
       setState(() {
         _furs = response['data']['items'];
@@ -50,7 +50,7 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, AppRoutes.customerFurniture);
+            Navigator.pushReplacementNamed(context, AppRoutes.customerDesign);
           },
         ),
       ),
@@ -118,63 +118,6 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                           description.isNotEmpty ? description : 'Chưa có mô tả.',
                           style: const TextStyle(fontSize: 16, height: 1.5),
                         ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Số lượng',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Nút -
-                                  InkWell(
-                                    onTap: () {
-                                      if (_quantity > 1) {
-                                        setState(() {
-                                          _quantity--;
-                                        });
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      child: const Icon(Icons.remove, size: 20),
-                                    ),
-                                  ),
-
-                                  // Số lượng hiển thị
-                                  Container(
-                                    width: 40,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      _quantity.toString(),
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-
-                                  // Nút +
-                                  InkWell(
-                                    borderRadius: BorderRadius.circular(8),
-                                    onTap: () {
-                                      setState(() {
-                                        _quantity++;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      child: const Icon(Icons.add, size: 20),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
 
                         const SizedBox(height: 10),
                         Row(
@@ -233,7 +176,7 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                         if (response != null && response['data'] != null) {
                           Navigator.pushNamed(
                             context,
-                            AppRoutes.customerFurDetail,
+                            AppRoutes.customerDesDetail,
                             arguments: response['data'],
                           );
                         }
@@ -320,9 +263,9 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12), // chỉ giữ padding trên dưới
         child: SizedBox(
-          height: 70,
+          height: 70, // chỉnh chiều cao phù hợp hơn
           child: BuyMenu(
             onAddToCart: () async {
               try {

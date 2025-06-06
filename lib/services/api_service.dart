@@ -38,16 +38,30 @@ class ApiService {
     return _handleResponse(response);
   }
 
+  // Thêm phương thức delete
+  static Future<dynamic> delete(String endpoint, {Map<String, String>? params}) async {
+    final uri = Uri.parse('$apiBaseUrl$endpoint').replace(queryParameters: params);
+    final token = await getToken();
+
+    final response = await http.delete(uri, headers: {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
+
+    return _handleResponse(response);
+  }
+
   static dynamic _handleResponse(http.Response response) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body);
     } else if (response.statusCode == 401) {
       Fluttertoast.showToast(msg: "Hết phiên đăng nhập. Vui lòng đăng nhập lại.");
       // TODO: Chuyển hướng về login nếu cần
-    } else {
-      debugPrint("API Error: ${response.statusCode} - ${response.body}");
-      Fluttertoast.showToast(msg: "Đã có lỗi xảy ra. Vui lòng thử lại.");
     }
+    // else {
+    //   debugPrint("API Error: ${response.statusCode} - ${response.body}");
+    //   Fluttertoast.showToast(msg: "Đã có lỗi xảy ra. Vui lòng thử lại.");
+    // }
 
     throw Exception("Failed request: ${response.statusCode}");
   }
