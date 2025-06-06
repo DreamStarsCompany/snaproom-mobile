@@ -14,6 +14,7 @@ class CusFurDetailContent extends StatefulWidget {
 
 class _CusFurDetailContentState extends State<CusFurDetailContent> {
   List<dynamic> _designs = [];
+  int _quantity = 1;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +118,64 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                           description.isNotEmpty ? description : 'Chưa có mô tả.',
                           style: const TextStyle(fontSize: 16, height: 1.5),
                         ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Số lượng',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Nút -
+                                  InkWell(
+                                    onTap: () {
+                                      if (_quantity > 1) {
+                                        setState(() {
+                                          _quantity--;
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: const Icon(Icons.remove, size: 20),
+                                    ),
+                                  ),
+
+                                  // Số lượng hiển thị
+                                  Container(
+                                    width: 40,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      _quantity.toString(),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+
+                                  // Nút +
+                                  InkWell(
+                                    borderRadius: BorderRadius.circular(8),
+                                    onTap: () {
+                                      setState(() {
+                                        _quantity++;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: const Icon(Icons.add, size: 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
                         const SizedBox(height: 10),
                         Row(
                           children: [
@@ -264,12 +324,30 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
         child: SizedBox(
           height: 70, // chỉnh chiều cao phù hợp hơn
           child: BuyMenu(
-            onContact: () {
-              print('Liên hệ');
+            onAddToCart: () async {
+              try {
+                final response = await UserService.addToCart(
+                  _quantity,
+                  widget.product['id'].toString(),
+                );
+
+
+                if (response != null && response['statusCode'] == 200) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Đã thêm vào giỏ hàng!")),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Thêm vào giỏ thất bại: ${response['message'] ?? 'Không rõ lỗi'}")),
+                  );
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Lỗi: ${e.toString()}")),
+                );
+              }
             },
-            onAddToCart: () {
-              print('Thêm vào giỏ');
-            },
+
             onBuyNow: () {
               print('Mua ngay');
             },

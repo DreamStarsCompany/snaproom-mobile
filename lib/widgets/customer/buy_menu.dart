@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BuyMenu extends StatefulWidget {
+class BuyMenu extends StatelessWidget {
   final VoidCallback? onContact;
   final VoidCallback? onAddToCart;
   final VoidCallback? onBuyNow;
@@ -12,37 +12,23 @@ class BuyMenu extends StatefulWidget {
     this.onBuyNow,
   }) : super(key: key);
 
-  @override
-  State<BuyMenu> createState() => _BuyMenuState();
-}
-
-class _BuyMenuState extends State<BuyMenu> {
-  int selectedIndex = -1; // -1 nghĩa chưa chọn cái nào
-
   final Color borderColor = const Color(0xFF3F5139);
 
-  void _onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-    // Gọi callback tương ứng
-    if (index == 0) {
-      widget.onContact?.call();
-    } else if (index == 1) {
-      widget.onAddToCart?.call();
-    } else if (index == 2) {
-      widget.onBuyNow?.call();
-    }
-  }
-
-  Widget _buildButton({required int index, required String label, IconData? icon}) {
-    final bool isSelected = selectedIndex == index;
+  Widget _buildButton({
+    required int index,
+    required String label,
+    IconData? icon,
+    required VoidCallback? onTap,
+  }) {
     return Expanded(
-      child: GestureDetector(
-        onTap: () => _onItemTapped(index),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.zero,
+        highlightColor: borderColor.withOpacity(0.3), // màu nền khi bấm giữ
+        splashColor: borderColor.withOpacity(0.1), // hiệu ứng ripple
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? borderColor : Colors.white,
+            color: Colors.white,
             border: Border(
               right: index != 2
                   ? BorderSide(color: borderColor, width: 1)
@@ -56,14 +42,14 @@ class _BuyMenuState extends State<BuyMenu> {
               if (icon != null)
                 Icon(
                   icon,
-                  color: isSelected ? Colors.white : borderColor,
+                  color: borderColor,
                   size: 20,
                 ),
               const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : borderColor,
+                  color: borderColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),
@@ -75,7 +61,6 @@ class _BuyMenuState extends State<BuyMenu> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -86,9 +71,9 @@ class _BuyMenuState extends State<BuyMenu> {
       ),
       child: Row(
         children: [
-          _buildButton(index: 0, label: 'Liên hệ', icon: Icons.phone),
-          _buildButton(index: 1, label: 'Thêm vào giỏ', icon: Icons.add_shopping_cart),
-          _buildButton(index: 2, label: 'Mua ngay', icon: Icons.shopping_bag),
+          _buildButton(index: 0, label: 'Liên hệ', icon: Icons.phone, onTap: onContact),
+          _buildButton(index: 1, label: 'Thêm vào giỏ', icon: Icons.add_shopping_cart, onTap: onAddToCart),
+          _buildButton(index: 2, label: 'Mua ngay', icon: Icons.shopping_bag, onTap: onBuyNow),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../routes/app_routes.dart';
 
 class CustomerHeader extends StatelessWidget {
   const CustomerHeader({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class CustomerHeader extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () {
-                    // Xử lý khi nhấn giỏ hàng
+                      Navigator.pushReplacementNamed(context, AppRoutes.customerCart);
                   },
                   icon: const Icon(Icons.shopping_cart),
                   color: Colors.white,

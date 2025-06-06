@@ -58,6 +58,17 @@ class UserService {
     });
   }
 
+  static Future<dynamic> getAllCart() async {
+    return await ApiService.get("/api/cart");
+  }
+
+  static Future<dynamic> addToCart(int quantity, String productId) async {
+    return await ApiService.post("/api/cart", {
+      "quantity": quantity,
+      "productId": productId,
+    });
+  }
+
   static Future<dynamic> getOrderById({required String id}) async {
     return await ApiService.get("/api/orders/$id");
   }

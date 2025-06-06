@@ -15,6 +15,7 @@ import '../screens/designer/designer_order_detail.dart';
 import '../screens/customer/customer_order.dart';
 import '../screens/customer/customer_order_detail.dart';
 import '../screens/customer/customer_fur_detail.dart';
+import '../screens/customer/customer_cart.dart';
 
 class AppRoutes {
   static const String login = '/';
@@ -33,6 +34,7 @@ class AppRoutes {
   static const String customerOrder = '/customerOrder';
   static const String customerOrderDetail = '/customerOrderDetail';
   static const String customerFurDetail = '/customerFurDetail';
+  static const String customerCart = '/customerCart';
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -72,6 +74,9 @@ class AppRoutes {
       case customerOrderDetail:
         final orderId = settings.arguments as String? ?? '';
         return MaterialPageRoute(builder: (_) => CustomerOrderDetail(orderId: orderId));
+      case customerCart:
+        return MaterialPageRoute(builder: (_) => const CustomerCart());
+
 
       default:
         return MaterialPageRoute(
