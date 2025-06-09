@@ -69,6 +69,20 @@ class UserService {
     });
   }
 
+  static Future<dynamic> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    return await ApiService.postWithQuery(
+      "/api/auth/update-password",
+      queryParams: {
+        "password": currentPassword,
+        "newPassword": newPassword,
+      },
+    );
+  }
+
+
   static Future<dynamic> getOrderById({required String id}) async {
     return await ApiService.get("/api/orders/$id");
   }
