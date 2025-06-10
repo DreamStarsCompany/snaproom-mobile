@@ -5,11 +5,11 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 
-class CusProfileContent extends StatefulWidget {
-  const CusProfileContent({super.key});
+class DesProfileContent extends StatefulWidget {
+  const DesProfileContent({super.key});
 
   @override
-  State<CusProfileContent> createState() => _CusProfileContentState();
+  State<DesProfileContent> createState() => _DesProfileContentState();
 }
 
 class ChangePasswordDialog extends StatefulWidget {
@@ -185,7 +185,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
 }
 
-class _CusProfileContentState extends State<CusProfileContent> {
+class _DesProfileContentState extends State<DesProfileContent> {
   Map<String, dynamic>? userInfo;
   static const Color darkGreen = Color(0xFF3F5139);
 
@@ -247,7 +247,7 @@ class _CusProfileContentState extends State<CusProfileContent> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
+                          Navigator.pushReplacementNamed(context, AppRoutes.designerHomepage);
                         },
                         icon: const Icon(Icons.arrow_back, color: Colors.white),
                       ),

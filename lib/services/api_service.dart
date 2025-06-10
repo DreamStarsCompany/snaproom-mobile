@@ -76,8 +76,8 @@ import '../config.dart';
 class ApiService {
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: apiBaseUrl,
-    connectTimeout: const Duration(seconds: 30),
-    receiveTimeout: const Duration(seconds: 30),
+    connectTimeout: const Duration(seconds: 100),
+    receiveTimeout: const Duration(seconds: 100),
     headers: {
       'Content-Type': 'application/json',
     },
