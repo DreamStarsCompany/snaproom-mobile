@@ -132,5 +132,31 @@ class UserService {
     );
   }
 
+  static Future<dynamic> forgetPassword({
+    required String email,
+    required int role,
+  }) async {
+    return await ApiService.postWithQuery(
+      "/api/auth/forget-password",
+      queryParams: {
+        "email": email,
+        "role": role.toString(),
+      },
+    );
+  }
+
+  static Future<dynamic> resetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    return await ApiService.postWithQuery(
+      "/api/auth/reset-password",
+      queryParams: {
+        "token": token,
+        "newPassword": newPassword,
+      },
+    );
+  }
+
 
 }

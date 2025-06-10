@@ -164,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Spacer(),
                   TextButton(
                     onPressed: () {
-                      // TODO: Forgot password logic
+                      Navigator.pushReplacementNamed(context, AppRoutes.forgetPassword);
                     },
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.all(

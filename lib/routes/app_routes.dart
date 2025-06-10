@@ -17,6 +17,9 @@ import '../screens/customer/customer_order_detail.dart';
 import '../screens/customer/customer_fur_detail.dart';
 import '../screens/customer/customer_des_detail.dart';
 import '../screens/customer/customer_cart.dart';
+import '../screens/forgetPassword/forget_password.dart';
+import '../screens/forgetPassword/reset_password.dart';
+
 
 class AppRoutes {
   static const String login = '/';
@@ -37,6 +40,8 @@ class AppRoutes {
   static const String customerFurDetail = '/customerFurDetail';
   static const String customerDesDetail = '/customerDesDetail';
   static const String customerCart = '/customerCart';
+  static const String forgetPassword = '/forgetPassword';
+  static const String resetPassword = '/resetPassword';
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -81,6 +86,16 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => CustomerOrderDetail(orderId: orderId));
       case customerCart:
         return MaterialPageRoute(builder: (_) => const CustomerCart());
+      case forgetPassword:
+        return MaterialPageRoute(builder: (_) => const ForgetPasswordScreen());
+      case resetPassword:
+        final token = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => ResetPasswordScreen(token: token),
+        );
+
+
+
 
 
       default:
