@@ -158,5 +158,9 @@ class UserService {
     );
   }
 
+  static Future<dynamic> updateCart(List<Map<String, dynamic>> items) async {
+    return await ApiService.put("/api/cart", items);
+  }
+
 
 }

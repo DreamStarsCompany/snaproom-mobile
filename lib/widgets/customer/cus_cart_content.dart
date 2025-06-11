@@ -105,20 +105,31 @@ class _CusCartContentState extends State<CusCartContent> {
   }
 
   Future<void> saveCartChanges() async {
-    // try {
-    //   await UserService.updateCart(cartData!); // Giả sử API updateCart có tồn tại
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Cập nhật giỏ hàng thành công')),
-    //   );
-    //   setState(() {
-    //     hasChanges = false;
-    //   });
-    // } catch (e) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Cập nhật thất bại: $e')),
-    //   );
-    // }
+    try {
+      List<Map<String, dynamic>> updatedItems = cartData!['orderDetails'].map<Map<String, dynamic>>((detail) {
+        return {
+          "productId": detail['product']['id'],
+          "quantity": parseInt(detail['quantity']),
+        };
+      }).toList();
+
+      var response = await UserService.updateCart(updatedItems);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['message'] ?? 'Lưu giỏ hàng thành công')),
+      );
+
+      setState(() {
+        hasChanges = false;  // Reset lại trạng thái sau khi lưu thành công
+      });
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi khi lưu giỏ hàng: $e')),
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

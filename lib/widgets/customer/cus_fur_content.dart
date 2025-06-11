@@ -3,6 +3,9 @@ import '../../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 import '../../screens/customer/customer_fur_detail.dart';
 
+const Color kPrimaryDarkGreen = Color(0xFF3F5139);
+
+
 class CusFurContent extends StatefulWidget {
   const CusFurContent({Key? key}) : super(key: key);
 
@@ -19,6 +22,66 @@ class __CusFurContentState extends State<CusFurContent> {
   void initState() {
     super.initState();
     _fetchFurnitures();
+  }
+
+  Widget _buildSortBar() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: kPrimaryDarkGreen, width: 1),
+
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildSortOption('Giá', 'price', isFirst: true),
+          _buildSortOption('Lượt mua', 'purchaseCount'),
+          _buildSortOption('Đánh giá', 'rating', isLast: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSortOption(String label, String field, {bool isFirst = false, bool isLast = false}) {
+    final bool isActive = _sortBy == field;
+    IconData icon = Icons.unfold_more;
+    if (isActive) {
+      icon = _isAscending ? Icons.arrow_upward : Icons.arrow_downward;
+    }
+
+    return Expanded(
+      child: InkWell(
+        onTap: () => _onSortChange(field),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border(
+              right: isLast ? BorderSide.none : BorderSide(color: kPrimaryDarkGreen, width: 1),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? kPrimaryDarkGreen : kPrimaryDarkGreen,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                icon,
+                size: 16,
+                color: isActive ? kPrimaryDarkGreen : kPrimaryDarkGreen,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _fetchFurnitures() async {
@@ -137,21 +200,7 @@ class __CusFurContentState extends State<CusFurContent> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildSortButton('Giá', 'price'),
-                  const SizedBox(width: 12),
-                  _buildSortButton('Lượt mua', 'purchaseCount'),
-                  const SizedBox(width: 12),
-                  _buildSortButton('Đánh giá', 'rating'),
-                ],
-              ),
-            ),
-          ),
+          _buildSortBar(),
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(16),

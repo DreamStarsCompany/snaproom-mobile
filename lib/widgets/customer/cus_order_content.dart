@@ -4,6 +4,9 @@ import '../../services/user_service.dart';
 import '../../../routes/app_routes.dart';  // import app routes
 import 'OrderCard.dart';
 
+const Color kPrimaryDarkGreen = Color(0xFF3F5139);
+
+
 class CusOrderContent extends StatefulWidget {
   const CusOrderContent({Key? key}) : super(key: key);
 
@@ -34,6 +37,65 @@ class _CusOrderContentState extends State<CusOrderContent> {
       });
     }
   }
+
+  Widget _buildSortBar() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: kPrimaryDarkGreen, width: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildSortOption('Giá', 'price', isFirst: true),
+          _buildSortOption('Ngày', 'date', isLast: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSortOption(String label, String field, {bool isFirst = false, bool isLast = false}) {
+    final bool isActive = _sortBy == field;
+    IconData icon = Icons.unfold_more;
+    if (isActive) {
+      icon = _isAscending ? Icons.arrow_upward : Icons.arrow_downward;
+    }
+
+    return Expanded(
+      child: InkWell(
+        onTap: () => _onSortChange(field),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border(
+              right: isLast ? BorderSide.none : BorderSide(color: kPrimaryDarkGreen, width: 1),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: kPrimaryDarkGreen,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                icon,
+                size: 16,
+                color: kPrimaryDarkGreen,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 
   void _applySorting() {
     setState(() {
@@ -112,21 +174,7 @@ class _CusOrderContentState extends State<CusOrderContent> {
       ),
       body: Column(
         children: [
-          // Thanh sort
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildSortButton('Giá', 'price'),
-                  const SizedBox(width: 12),
-                  _buildSortButton('Ngày', 'date'),
-                ],
-              ),
-            ),
-          ),
-
+          _buildSortBar(),
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())

@@ -130,6 +130,16 @@ class ApiService {
     }
   }
 
+  static Future<dynamic> put(String endpoint, dynamic body) async {
+    await _setAuthHeader();
+    try {
+      final response = await _dio.put(endpoint, data: body);
+      return response.data;
+    } on DioException catch (e) {
+      _handleError(e);
+      rethrow;
+    }
+  }
 
   static Future<dynamic> delete(String endpoint, {Map<String, String>? params}) async {
     await _setAuthHeader();
