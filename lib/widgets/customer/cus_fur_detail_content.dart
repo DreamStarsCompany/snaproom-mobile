@@ -325,12 +325,22 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
           height: 70,
           child: BuyMenu(
             onAddToCart: () async {
+              final productDetail = widget.product;
+              final isActive = productDetail['active'] ?? false;
+
+              if (!isActive) {
+                // Nếu sản phẩm ngừng kinh doanh (active = false)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Sản phẩm đã hết hàng")),
+                );
+                return;
+              }
+
               try {
                 final response = await UserService.addToCart(
                   _quantity,
                   widget.product['id'].toString(),
                 );
-
 
                 if (response != null && response['statusCode'] == 200) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -347,6 +357,7 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                 );
               }
             },
+
 
             onBuyNow: () {
               print('Mua ngay');

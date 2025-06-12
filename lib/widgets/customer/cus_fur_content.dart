@@ -87,12 +87,27 @@ class __CusFurContentState extends State<CusFurContent> {
   Future<void> _fetchFurnitures() async {
     final response = await UserService.getAllFurnitures();
     if (response != null && response['data'] != null) {
+      List<dynamic> items = response['data']['items'];
+
+      // Gọi getProductById lần lượt cho từng sản phẩm
+      List<dynamic> approvedProducts = [];
+      for (var item in items) {
+        final detailResponse = await UserService.getProductById(item['id']);
+        if (detailResponse != null && detailResponse['data'] != null) {
+          final detail = detailResponse['data'];
+          if (detail['approved'] == true) {
+            approvedProducts.add(item);
+          }
+        }
+      }
+
       setState(() {
-        _designs = response['data']['items'];
+        _designs = approvedProducts;
         _applySorting();
       });
     }
   }
+
 
   void _applySorting() {
     setState(() {
