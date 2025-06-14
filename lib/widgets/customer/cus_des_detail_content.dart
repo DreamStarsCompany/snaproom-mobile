@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 import 'buy_menu.dart';
+import 'package:intl/intl.dart';
 
 class CusDesDetail extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -15,6 +16,11 @@ class CusDesDetail extends StatefulWidget {
 class _CusDesDetailState extends State<CusDesDetail> {
   List<dynamic> _furs = [];
   int _quantity = 1;
+
+  String formatCurrency(double amount) {
+    final formatCurrency = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0);
+    return formatCurrency.format(amount);
+  }
 
   @override
   void initState() {
@@ -40,6 +46,7 @@ class _CusDesDetailState extends State<CusDesDetail> {
     final rating = product['rating'] ?? 0;
     final imageSource = product['primaryImage']?['imageSource'];
     final description = product['description'] ?? '';
+    final designerName = product['designer']?['name'] ?? 'Không rõ';
 
     const mainTextColor = Color(0xFF3F5139);
 
@@ -104,11 +111,48 @@ class _CusDesDetailState extends State<CusDesDetail> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Giá: ${price.toString()}đ',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Giá:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              formatCurrency(price),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Nhà thiết kế:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              designerName,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
                         const Text(
                           'Mô tả sản phẩm',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -119,7 +163,7 @@ class _CusDesDetailState extends State<CusDesDetail> {
                           style: const TextStyle(fontSize: 16, height: 1.5),
                         ),
 
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20),
                         Row(
                           children: [
                             const Icon(Icons.star, size: 18, color: Colors.orange),
@@ -216,7 +260,7 @@ class _CusDesDetailState extends State<CusDesDetail> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Giá: ${price.toString()}đ',
+                                    'Giá: ${formatCurrency(price)}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(fontSize: 11, color: Colors.grey),

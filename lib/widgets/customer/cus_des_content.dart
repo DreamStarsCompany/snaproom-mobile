@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 import '../../services/user_service.dart';
+import 'package:intl/intl.dart';
 
 const Color kPrimaryDarkGreen = Color(0xFF3F5139);
 
@@ -9,6 +10,11 @@ class CusDesContent extends StatefulWidget {
 
   @override
   State<CusDesContent> createState() => _CusDesContentState();
+}
+
+String formatCurrency(double amount) {
+  final formatCurrency = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0);
+  return formatCurrency.format(amount);
 }
 
 class _CusDesContentState extends State<CusDesContent> {
@@ -296,7 +302,7 @@ class _CusDesContentState extends State<CusDesContent> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Giá: ${price.toString()}đ',
+                                    'Giá: ${formatCurrency(price)}',
                                     style: const TextStyle(
                                       color: Colors.grey,
                                       fontSize: 14,

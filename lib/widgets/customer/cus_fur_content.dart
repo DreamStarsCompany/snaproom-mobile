@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 import '../../services/user_service.dart';
-import '../../screens/customer/customer_fur_detail.dart';
+import 'package:intl/intl.dart';
 
 const Color kPrimaryDarkGreen = Color(0xFF3F5139);
 
@@ -17,6 +17,11 @@ class __CusFurContentState extends State<CusFurContent> {
   List<dynamic> _designs = [];
   String _sortBy = 'price';
   bool _isAscending = true;
+
+  String formatCurrency(double amount) {
+    final formatCurrency = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0);
+    return formatCurrency.format(amount);
+  }
 
   @override
   void initState() {
@@ -306,7 +311,7 @@ class __CusFurContentState extends State<CusFurContent> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Giá: ${price.toString()}đ',
+                                  'Giá: ${formatCurrency(price)}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(

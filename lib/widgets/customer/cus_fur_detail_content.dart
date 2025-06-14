@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import '../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 import 'buy_menu.dart';
+import 'package:intl/intl.dart';
+
 
 class CusFurDetailContent extends StatefulWidget {
   final Map<String, dynamic> product;
 
-  const CusFurDetailContent({Key? key, required this.product}) : super(key: key);
+  const CusFurDetailContent({Key? key, required this.product})
+    : super(key: key);
 
   @override
   State<CusFurDetailContent> createState() => _CusFurDetailContentState();
@@ -31,6 +34,10 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
     }
   }
 
+  String formatCurrency(double amount) {
+    final formatCurrency = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0);
+    return formatCurrency.format(amount);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +47,7 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
     final rating = product['rating'] ?? 0;
     final imageSource = product['primaryImage']?['imageSource'];
     final description = product['description'] ?? '';
+    final designerName = product['designer']?['name'] ?? 'Không rõ';
 
     const mainTextColor = Color(0xFF3F5139);
 
@@ -50,7 +58,10 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, AppRoutes.customerFurniture);
+            Navigator.pushReplacementNamed(
+              context,
+              AppRoutes.customerFurniture,
+            );
           },
         ),
       ),
@@ -78,24 +89,31 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                   ),
                   const SizedBox(height: 12),
                   Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     elevation: 4,
                     color: const Color(0xFFBCD4B5),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: imageSource != null
-                          ? Image.network(
-                        imageSource,
-                        width: double.infinity,
-                        height: 270,
-                        fit: BoxFit.contain,
-                      )
-                          : Container(
-                        width: double.infinity,
-                        height: 220,
-                        color: const Color(0xFFBCD4B5),
-                        child: const Icon(Icons.image_not_supported, size: 60, color: Colors.white),
-                      ),
+                      child:
+                          imageSource != null
+                              ? Image.network(
+                                imageSource,
+                                width: double.infinity,
+                                height: 270,
+                                fit: BoxFit.contain,
+                              )
+                              : Container(
+                                width: double.infinity,
+                                height: 220,
+                                color: const Color(0xFFBCD4B5),
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  size: 60,
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -104,31 +122,76 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Giá: ${price.toString()}đ',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Giá:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              formatCurrency(price),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Nhà thiết kế:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              designerName,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
                         const Text(
                           'Mô tả sản phẩm',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          description.isNotEmpty ? description : 'Chưa có mô tả.',
+                          description.isNotEmpty
+                              ? description
+                              : 'Chưa có mô tả.',
                           style: const TextStyle(fontSize: 16, height: 1.5),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
                               'Số lượng',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             Container(
-                              decoration: BoxDecoration(
-                              ),
+                              decoration: BoxDecoration(),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -142,7 +205,10 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                                       }
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
                                       child: const Icon(Icons.remove, size: 20),
                                     ),
                                   ),
@@ -166,7 +232,10 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                                       });
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
                                       child: const Icon(Icons.add, size: 20),
                                     ),
                                   ),
@@ -176,10 +245,14 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                           ],
                         ),
 
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20),
                         Row(
                           children: [
-                            const Icon(Icons.star, size: 18, color: Colors.orange),
+                            const Icon(
+                              Icons.star,
+                              size: 18,
+                              color: Colors.orange,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               '$rating / 5.0',
@@ -218,7 +291,8 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _furs.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                  separatorBuilder:
+                      (context, index) => const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     final item = _furs[index];
                     final id = item['id'];
@@ -244,23 +318,39 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12),
+                              ),
                               child: Container(
                                 height: 170,
                                 color: const Color(0xFFBCD4B5),
-                                child: imageSource != null && imageSource.isNotEmpty
-                                    ? Image.network(imageSource, fit: BoxFit.contain)
-                                    : const Center(
-                                  child: Icon(Icons.image_not_supported, size: 40, color: Colors.white54),
-                                ),
+                                child:
+                                    imageSource != null &&
+                                            imageSource.isNotEmpty
+                                        ? Image.network(
+                                          imageSource,
+                                          fit: BoxFit.contain,
+                                        )
+                                        : const Center(
+                                          child: Icon(
+                                            Icons.image_not_supported,
+                                            size: 40,
+                                            color: Colors.white54,
+                                          ),
+                                        ),
                               ),
                             ),
                             Container(
                               decoration: const BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                                borderRadius: BorderRadius.vertical(
+                                  bottom: Radius.circular(12),
+                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
@@ -269,21 +359,34 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                                     name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Giá: ${price.toString()}đ',
+                                    'Giá: ${formatCurrency(price)}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                   const SizedBox(height: 2),
                                   Row(
                                     children: [
-                                      const Icon(Icons.star, size: 12, color: Colors.orange),
+                                      const Icon(
+                                        Icons.star,
+                                        size: 12,
+                                        color: Colors.orange,
+                                      ),
                                       const SizedBox(width: 4),
-                                      Text('$rating', style: const TextStyle(fontSize: 11)),
+                                      Text(
+                                        '$rating',
+                                        style: const TextStyle(fontSize: 11),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -348,16 +451,23 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Thêm vào giỏ thất bại: ${response['message'] ?? 'Không rõ lỗi'}")),
+                    SnackBar(
+                      content: Text(
+                        "Thêm vào giỏ thất bại: ${response['message'] ?? 'Không rõ lỗi'}",
+                      ),
+                    ),
                   );
                 }
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Vui lòng chọn các sản phẩm có cùng nhà thiết kế")),
+                  SnackBar(
+                    content: Text(
+                      "Vui lòng chọn các sản phẩm có cùng nhà thiết kế",
+                    ),
+                  ),
                 );
               }
             },
-
 
             onBuyNow: () {
               print('Mua ngay');
@@ -365,7 +475,6 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
           ),
         ),
       ),
-
     );
   }
 }
