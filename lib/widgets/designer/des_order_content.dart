@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For formatting currency and date
 import '../../services/user_service.dart';
-import '../../../routes/app_routes.dart';  // import app routes
+import '../../../routes/app_routes.dart';
 import 'OrderCard.dart';
+
+const Color kPrimaryDarkGreen = Color(0xFF3F5139);
 
 class DesOrderContent extends StatefulWidget {
   const DesOrderContent({Key? key}) : super(key: key);
@@ -12,83 +14,156 @@ class DesOrderContent extends StatefulWidget {
 }
 
 class _DesOrderContentState extends State<DesOrderContent> {
-  List<dynamic> orders = [];
-  bool isLoading = true;
+  List<dynamic> _orders = [];
+  List<dynamic> _filteredOrders = [];
+  bool _isLoading = true;
 
-  String _sortBy = 'price';
+  String _sortBy = 'orderPrice';
   bool _isAscending = true;
+
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  String _selectedStatus = 'Tất cả';
+  final List<String> _statusOptions = ['Tất cả', 'Processing', 'Completed', 'Buy'];
 
   @override
   void initState() {
     super.initState();
     fetchOrders();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 
   Future<void> fetchOrders() async {
     final response = await UserService.getAllOrdersByDes();
     if (response != null && response['data'] != null) {
       setState(() {
-        orders = response['data']['items'];
-        _applySorting();
-        isLoading = false;
+        _orders = response['data']['items'];
+        _filteredOrders = List.from(_orders);
+        _applyFilterAndSort();
+        _isLoading = false;
       });
     }
   }
 
-  void _applySorting() {
-    setState(() {
-      orders.sort((a, b) {
-        dynamic aValue = a[_sortBy];
-        dynamic bValue = b[_sortBy];
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
 
-        // Với ngày thì parse DateTime
-        if (_sortBy == 'date') {
-          aValue = aValue != null ? DateTime.tryParse(aValue) ?? DateTime(1970) : DateTime(1970);
-          bValue = bValue != null ? DateTime.tryParse(bValue) ?? DateTime(1970) : DateTime(1970);
-        } else {
-          // Nếu không phải số thì chuyển sang 0 để tránh lỗi
-          aValue = (aValue is num) ? aValue : 0;
-          bValue = (bValue is num) ? bValue : 0;
-        }
-
-        int compareResult;
-        if (aValue is DateTime && bValue is DateTime) {
-          compareResult = aValue.compareTo(bValue);
-        } else if (aValue is num && bValue is num) {
-          compareResult = aValue.compareTo(bValue);
-        } else {
-          compareResult = 0;
-        }
-
-        return _isAscending ? compareResult : -compareResult;
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      setState(() {
+        _applyFilterAndSort();
       });
+    });
+  }
+
+  void _applyFilterAndSort() {
+    String keyword = _searchController.text.trim().toLowerCase();
+
+    // Lọc theo search và status
+    _filteredOrders = _orders.where((order) {
+      final code = (order['id'] ?? '').toString().toLowerCase();
+      final status = (order['status'] ?? '').toString();
+
+      final matchKeyword = code.contains(keyword);
+      final matchStatus = (_selectedStatus == 'Tất cả' || status == _selectedStatus);
+      return matchKeyword && matchStatus;
+    }).toList();
+
+    // Sắp xếp
+    _filteredOrders.sort((a, b) {
+      dynamic aValue = a[_sortBy];
+      dynamic bValue = b[_sortBy];
+
+      if (_sortBy == 'date') {
+        aValue = aValue != null ? DateTime.tryParse(aValue) ?? DateTime(1970) : DateTime(1970);
+        bValue = bValue != null ? DateTime.tryParse(bValue) ?? DateTime(1970) : DateTime(1970);
+      } else {
+        aValue = (aValue is num) ? aValue : num.tryParse(aValue?.toString() ?? '0') ?? 0;
+        bValue = (bValue is num) ? bValue : num.tryParse(bValue?.toString() ?? '0') ?? 0;
+      }
+
+      int compareResult;
+      if (aValue is DateTime && bValue is DateTime) {
+        compareResult = aValue.compareTo(bValue);
+      } else if (aValue is num && bValue is num) {
+        compareResult = aValue.compareTo(bValue);
+      } else {
+        compareResult = 0;
+      }
+
+      return _isAscending ? compareResult : -compareResult;
     });
   }
 
   void _onSortChange(String field) {
     setState(() {
       if (_sortBy == field) {
-        _isAscending = !_isAscending; // Đảo chiều nếu chọn cùng trường
+        _isAscending = !_isAscending;
       } else {
         _sortBy = field;
-        _isAscending = true; // Mặc định tăng dần khi đổi trường
+        _isAscending = true;
       }
-      _applySorting();
+      _applyFilterAndSort();
     });
   }
 
-  Widget _buildSortButton(String label, String field) {
-    IconData icon = Icons.arrow_downward;
-    if (_sortBy == field) {
+  Widget _buildSortBar() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: kPrimaryDarkGreen, width: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildSortOption('Tổng giá', 'orderPrice', isFirst: true),
+          _buildSortOption('Ngày đặt', 'date', isLast: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSortOption(String label, String field, {bool isFirst = false, bool isLast = false}) {
+    final bool isActive = _sortBy == field;
+    IconData icon = Icons.unfold_more;
+    if (isActive) {
       icon = _isAscending ? Icons.arrow_upward : Icons.arrow_downward;
     }
 
-    return TextButton.icon(
-      onPressed: () => _onSortChange(field),
-      icon: Icon(icon, size: 16),
-      label: Text(label),
-      style: TextButton.styleFrom(
-        foregroundColor: _sortBy == field ? Colors.green : Colors.black87,
+    return Expanded(
+      child: InkWell(
+        onTap: () => _onSortChange(field),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border(
+              right: isLast ? BorderSide.none : BorderSide(color: kPrimaryDarkGreen, width: 1),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: kPrimaryDarkGreen,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(icon, size: 16, color: kPrimaryDarkGreen),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -97,49 +172,88 @@ class _DesOrderContentState extends State<DesOrderContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          splashColor: Colors.grey.withOpacity(0.3),
-          highlightColor: Colors.transparent,
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, AppRoutes.designerHomepage);
-          },
-        ),
-
-      ),
-      body: Column(
-        children: [
-          // Thanh sort
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
-                  _buildSortButton('Giá', 'price'),
-                  const SizedBox(width: 12),
-                  _buildSortButton('Ngày', 'date'),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, AppRoutes.designerHomepage);
+                    },
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                          hintText: 'Tìm kiếm mã đơn hàng...',
+                          fillColor: Colors.grey[200],
+                          filled: true,
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: kPrimaryDarkGreen, width: 1),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedStatus,
+                        icon: const Icon(Icons.arrow_drop_down, color: kPrimaryDarkGreen),
+                        style: const TextStyle(
+                            color: kPrimaryDarkGreen, fontWeight: FontWeight.bold),
+                        dropdownColor: Colors.white,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedStatus = newValue!;
+                            _applyFilterAndSort();
+                          });
+                        },
+                        items: _statusOptions.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, overflow: TextOverflow.ellipsis),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-
-          Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                final order = orders[index];
-                return OrderCard(order: order);
-              },
+            _buildSortBar(),
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: _filteredOrders.length,
+                itemBuilder: (context, index) {
+                  final order = _filteredOrders[index];
+                  return OrderCard(order: order);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

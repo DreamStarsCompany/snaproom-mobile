@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/designer/des_header.dart';
-import '../../widgets/designer/des_menu.dart';
+import '../../widgets/designer/dashboard_content.dart';
 
 class DesignerDashboard extends StatelessWidget {
   const DesignerDashboard({super.key});
@@ -13,11 +13,7 @@ class DesignerDashboard extends StatelessWidget {
         preferredSize: Size.fromHeight(60),
         child: DesHeader(),
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Center(child: Text('Dashboard')), // nội dung
-      ),
-      bottomNavigationBar: const DesMenu(selectedIndex: 0),
+      body: const DashboardContent(),
     );
   }
 }

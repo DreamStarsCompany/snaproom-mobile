@@ -13,7 +13,6 @@ class OrderCard extends StatelessWidget {
     final status = order['status'] ?? 'Unknown';
     final name = order['customer']?['name'] ?? 'Unknown';
 
-
     final rawPrice = order['orderPrice'];
     final price = (rawPrice is int || rawPrice is double)
         ? rawPrice
@@ -36,7 +35,7 @@ class OrderCard extends StatelessWidget {
         );
       },
       child: Container(
-        height: 140,
+        // XÓA height cố định để tránh overflow
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
@@ -53,7 +52,6 @@ class OrderCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Mã đơn: $id", style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
@@ -61,7 +59,21 @@ class OrderCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text("Tổng giá: ${currencyFormatter.format(price)}"),
             const SizedBox(height: 4),
-            Text("Trạng thái: $status"),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Trạng thái: "),
+                Expanded(
+                  child: Text(
+                    status,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 4),
             Text("Thời gian: $formattedDate"),
           ],
