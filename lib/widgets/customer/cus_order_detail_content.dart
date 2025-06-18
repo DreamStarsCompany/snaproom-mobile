@@ -6,6 +6,7 @@ import '../../routes/app_routes.dart'; // nhớ import AppRoutes
 class CusOrderDetailContent extends StatefulWidget {
   final String orderId;
 
+
   const CusOrderDetailContent({Key? key, required this.orderId}) : super(key: key);
 
   @override
@@ -78,17 +79,57 @@ class _CusOrderDetailContentState extends State<CusOrderDetailContent> {
               final productName = product['name'] ?? 'N/A';
               final quantity = detail['quantity'] ?? 0;
               final detailPrice = detail['detailPrice'] ?? 0;
+              final imageUrl = product['primaryImage']?['imageSource'];
+
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child: Text('$productName (x$quantity)', style: const TextStyle(fontSize: 14))),
-                    Text(currencyFormatter.format(detailPrice), style: const TextStyle(fontSize: 14)),
-                  ],
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      // Hình ảnh sản phẩm
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
+                        ),
+                        child: Image.network(
+                          imageUrl ?? '',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 80),
+                        ),
+                      ),
+
+                      // Thông tin sản phẩm
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                productName,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 4),
+                              Text('Số lượng: $quantity'),
+                              const SizedBox(height: 4),
+                              Text('Giá: ${currencyFormatter.format(detailPrice)}'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }).toList(),
+
             const SizedBox(height: 16),
             const Divider(),
             const Text('Lịch sử trạng thái:', style: TextStyle(fontWeight: FontWeight.bold)),

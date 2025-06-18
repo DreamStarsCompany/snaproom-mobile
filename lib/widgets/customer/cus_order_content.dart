@@ -18,8 +18,13 @@ class _CusOrderContentState extends State<CusOrderContent> {
   List<dynamic> _filteredOrders = [];
   bool _isLoading = true;
 
-  String _sortBy = 'orderPrice';  // Đổi đúng key
+  // --- Sort & Filter state ---
+  String _sortBy = 'orderPrice';
   bool _isAscending = true;
+
+  // Dropdown lọc trạng thái
+  String _selectedStatus = 'Tất cả';
+  final List<String> _statusOptions = ['Tất cả', 'Processing', 'Completed', 'Buy'];
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -44,7 +49,7 @@ class _CusOrderContentState extends State<CusOrderContent> {
       setState(() {
         _orders = response['data']['items'];
         _filteredOrders = List.from(_orders);
-        _applySorting();
+        _applyFilterAndSort();
         _isLoading = false;
       });
     }
@@ -52,44 +57,53 @@ class _CusOrderContentState extends State<CusOrderContent> {
 
   void _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-
     _debounce = Timer(const Duration(milliseconds: 400), () {
-      String keyword = _searchController.text.trim().toLowerCase();
-      setState(() {
-        _filteredOrders = _orders.where((order) {
-          final code = (order['id'] ?? '').toString();  // Tìm theo id
-          return code.toLowerCase().contains(keyword);
-        }).toList();
-        _applySorting();
-      });
+      setState(() => _applyFilterAndSort());
     });
   }
 
-  void _applySorting() {
-    setState(() {
-      _filteredOrders.sort((a, b) {
-        dynamic aValue = a[_sortBy];
-        dynamic bValue = b[_sortBy];
+  void _applyFilterAndSort() {
+    final keyword = _searchController.text.trim().toLowerCase();
 
-        if (_sortBy == 'date') {
-          aValue = aValue != null ? DateTime.tryParse(aValue) ?? DateTime(1970) : DateTime(1970);
-          bValue = bValue != null ? DateTime.tryParse(bValue) ?? DateTime(1970) : DateTime(1970);
-        } else {
-          aValue = (aValue is num) ? aValue : num.tryParse(aValue?.toString() ?? '0') ?? 0;
-          bValue = (bValue is num) ? bValue : num.tryParse(bValue?.toString() ?? '0') ?? 0;
-        }
+    // Lọc theo search + status
+    _filteredOrders = _orders.where((order) {
+      final code = (order['id'] ?? '').toString().toLowerCase();
+      final status = (order['status'] ?? '').toString();
+      final matchKeyword = code.contains(keyword);
+      final matchStatus = _selectedStatus == 'Tất cả' || status == _selectedStatus;
+      return matchKeyword && matchStatus;
+    }).toList();
 
-        int compareResult;
-        if (aValue is DateTime && bValue is DateTime) {
-          compareResult = aValue.compareTo(bValue);
-        } else if (aValue is num && bValue is num) {
-          compareResult = aValue.compareTo(bValue);
-        } else {
-          compareResult = 0;
-        }
+    // Sắp xếp
+    _filteredOrders.sort((a, b) {
+      dynamic aValue = a[_sortBy];
+      dynamic bValue = b[_sortBy];
 
-        return _isAscending ? compareResult : -compareResult;
-      });
+      if (_sortBy == 'date') {
+        aValue = aValue != null
+            ? DateTime.tryParse(aValue) ?? DateTime(1970)
+            : DateTime(1970);
+        bValue = bValue != null
+            ? DateTime.tryParse(bValue) ?? DateTime(1970)
+            : DateTime(1970);
+      } else {
+        aValue = (aValue is num)
+            ? aValue
+            : num.tryParse(aValue?.toString() ?? '0') ?? 0;
+        bValue = (bValue is num)
+            ? bValue
+            : num.tryParse(bValue?.toString() ?? '0') ?? 0;
+      }
+
+      int cmp;
+      if (aValue is DateTime && bValue is DateTime) {
+        cmp = aValue.compareTo(bValue);
+      } else if (aValue is num && bValue is num) {
+        cmp = aValue.compareTo(bValue);
+      } else {
+        cmp = 0;
+      }
+      return _isAscending ? cmp : -cmp;
     });
   }
 
@@ -101,7 +115,7 @@ class _CusOrderContentState extends State<CusOrderContent> {
         _sortBy = field;
         _isAscending = true;
       }
-      _applySorting();
+      _applyFilterAndSort();
     });
   }
 
@@ -123,12 +137,11 @@ class _CusOrderContentState extends State<CusOrderContent> {
     );
   }
 
-  Widget _buildSortOption(String label, String field, {bool isFirst = false, bool isLast = false}) {
-    final bool isActive = _sortBy == field;
+  Widget _buildSortOption(String label, String field,
+      {bool isFirst = false, bool isLast = false}) {
+    final isActive = _sortBy == field;
     IconData icon = Icons.unfold_more;
-    if (isActive) {
-      icon = _isAscending ? Icons.arrow_upward : Icons.arrow_downward;
-    }
+    if (isActive) icon = _isAscending ? Icons.arrow_upward : Icons.arrow_downward;
 
     return Expanded(
       child: InkWell(
@@ -137,19 +150,17 @@ class _CusOrderContentState extends State<CusOrderContent> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             border: Border(
-              right: isLast ? BorderSide.none : BorderSide(color: kPrimaryDarkGreen, width: 1),
+              right: isLast
+                  ? BorderSide.none
+                  : BorderSide(color: kPrimaryDarkGreen, width: 1),
             ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: kPrimaryDarkGreen,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text(label,
+                  style: const TextStyle(
+                      color: kPrimaryDarkGreen, fontWeight: FontWeight.bold)),
               const SizedBox(width: 4),
               Icon(icon, size: 16, color: kPrimaryDarkGreen),
             ],
@@ -166,6 +177,7 @@ class _CusOrderContentState extends State<CusOrderContent> {
       body: SafeArea(
         child: Column(
           children: [
+            // Search + Status dropdown
             Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -174,7 +186,8 @@ class _CusOrderContentState extends State<CusOrderContent> {
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
+                      Navigator.pushReplacementNamed(
+                          context, AppRoutes.customerHomepage);
                     },
                   ),
                   Expanded(
@@ -196,10 +209,46 @@ class _CusOrderContentState extends State<CusOrderContent> {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  // Dropdown trạng thái
+                  Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: kPrimaryDarkGreen, width: 1),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedStatus,
+                        icon: const Icon(Icons.arrow_drop_down, color: kPrimaryDarkGreen),
+                        style: const TextStyle(
+                            color: kPrimaryDarkGreen, fontWeight: FontWeight.bold),
+                        dropdownColor: Colors.white,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedStatus = newValue!;
+                            _applyFilterAndSort();
+                          });
+                        },
+                        items: _statusOptions
+                            .map((status) => DropdownMenuItem(
+                          value: status,
+                          child: Text(status, overflow: TextOverflow.ellipsis),
+                        ))
+                            .toList(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
+
+            // Sort bar
             _buildSortBar(),
+
+            // List
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())

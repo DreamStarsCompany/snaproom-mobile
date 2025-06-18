@@ -1,4 +1,8 @@
 // lib/services/user_service.dart
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../config.dart';
 import 'api_service.dart';
 
 class UserService {
@@ -162,5 +166,45 @@ class UserService {
     return await ApiService.put("/api/cart", items);
   }
 
+  // static Future<String?> createPaymentRedirectHtml() async {
+  //   final url = Uri.parse('$apiBaseUrl/api/payment');
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //
+  //   final response = await http.get(url, headers: {
+  //     'Authorization': 'Bearer $token',
+  //   });
+  //
+  //   print("Redirect URL: ${url}");
+  //
+  //   print('[Payment] ✅ Status: ${response.statusCode}');
+  //   print('[Payment] 🧾 Body (first 300 chars): ${response.body.substring(0, 300)}');
+  //
+  //   if (response.statusCode == 200 && response.body.contains('<!DOCTYPE html>')) {
+  //     return response.body;
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+  static Future<dynamic> getPaymentLink() async {
+    return await ApiService.get("/api/payment");
+  }
+
+  static Future<dynamic> reviewProduct({
+    required String productId,
+    required String comment,
+    required int star,
+  }) async {
+    return await ApiService.postWithQuery(
+      "/api/products/review",
+      queryParams: {
+        "id": productId,
+        "comment": comment,
+        "star": star.toString(),
+      },
+    );
+  }
 
 }

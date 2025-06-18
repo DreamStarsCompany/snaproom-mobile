@@ -3,6 +3,8 @@ import '../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 import 'buy_menu.dart';
 import 'package:intl/intl.dart';
+import 'review_content.dart';
+
 
 
 class CusFurDetailContent extends StatefulWidget {
@@ -23,6 +25,14 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
   void initState() {
     super.initState();
     _fetchFurnitures();
+    _loadProduct(widget.product);
+  }
+
+  List<Map<String, dynamic>> _reviews = [];
+  void _loadProduct(Map<String, dynamic> productData) {
+    setState(() {
+      _reviews = List<Map<String, dynamic>>.from(productData['reviews'] ?? []);
+    });
   }
 
   Future<void> _fetchFurnitures() async {
@@ -305,13 +315,14 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                       onTap: () async {
                         final response = await UserService.getProductById(id);
                         if (response != null && response['data'] != null) {
-                          Navigator.pushNamed(
+                          Navigator.pushReplacementNamed(
                             context,
                             AppRoutes.customerFurDetail,
                             arguments: response['data'],
                           );
                         }
                       },
+
                       child: SizedBox(
                         width: 160,
                         child: Column(
@@ -418,7 +429,18 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                 ),
               ),
             ),
-            // TODO: Nội dung đánh giá
+
+            const SizedBox(height: 12),
+            ReviewContent(
+              productId: widget.product['id'],
+              reviews: _reviews,
+              onSubmitted: () async {
+                final res = await UserService.getProductById(widget.product['id']);
+                if (res != null && res['data'] != null) {
+                  _loadProduct(res['data']);
+                }
+              },
+            ),
           ],
         ),
       ),
