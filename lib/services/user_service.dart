@@ -166,28 +166,6 @@ class UserService {
     return await ApiService.put("/api/cart", items);
   }
 
-  // static Future<String?> createPaymentRedirectHtml() async {
-  //   final url = Uri.parse('$apiBaseUrl/api/payment');
-  //
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('token');
-  //
-  //   final response = await http.get(url, headers: {
-  //     'Authorization': 'Bearer $token',
-  //   });
-  //
-  //   print("Redirect URL: ${url}");
-  //
-  //   print('[Payment] ✅ Status: ${response.statusCode}');
-  //   print('[Payment] 🧾 Body (first 300 chars): ${response.body.substring(0, 300)}');
-  //
-  //   if (response.statusCode == 200 && response.body.contains('<!DOCTYPE html>')) {
-  //     return response.body;
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
   static Future<dynamic> getPaymentLink() async {
     return await ApiService.get("/api/payment");
   }
@@ -206,5 +184,21 @@ class UserService {
       },
     );
   }
+
+  static Future<dynamic> updateCartInfo({
+    required String address,
+    required String phoneNumber,
+    required int method,
+  }) async {
+    return await ApiService.put(
+      "/api/cart-info",
+      {
+        "address": address,
+        "phoneNumber": phoneNumber,
+        "method": method,
+      },
+    );
+  }
+
 
 }
