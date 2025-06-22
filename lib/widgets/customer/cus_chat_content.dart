@@ -3,53 +3,67 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../services/user_service.dart';
+import '../../services/signalr_service.dart';
 
 class CusChatContent extends StatefulWidget {
   final String conversationId;
   final String senderName;
+  final Function(String, String)? onMessageSent;
   const CusChatContent({
     Key? key,
     required this.conversationId,
     required this.senderName,
+    this.onMessageSent,
   }) : super(key: key);
 
   @override
   State<CusChatContent> createState() => _CusChatContentState();
+
 }
 
 class _CusChatContentState extends State<CusChatContent> {
+  final TextEditingController _controller = TextEditingController();
   List<dynamic> messages = [];
   String conversationId = '';
   String newMessage = '';
   bool isLoading = true;
-  String Id = '';
+  String userId = '';
+  Function(String, String)? onMessageSent;
 
   @override
   void initState() {
     super.initState();
     conversationId = widget.conversationId;
-    _loadId();
+    onMessageSent = widget.onMessageSent;
+    _initUserAndSignalR();
     fetchConversation();
   }
 
-  Future<void> _loadId() async {
+  Future<void> _initUserAndSignalR() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    print("Token from SharedPreferences: $token");
     if (token != null && token.isNotEmpty) {
       try {
         final decoded = JwtDecoder.decode(token);
-        print("Decoded token payload: $decoded");
         final extractedId = decoded['Id'] ?? decoded['sub'] ?? '';
-        print("Extracted user Id: $extractedId");
         setState(() {
-          Id = extractedId;
+          userId = extractedId;
         });
+
+        // Khởi tạo SignalR và lắng nghe tin nhắn realtime
+        await SignalRService.startConnection(token, _onReceiveMessage);
       } catch (e) {
-        print("Decode token error: $e");
+        print("Error decoding token or starting SignalR: $e");
       }
-    } else {
-      print("Token is null or empty");
+    }
+  }
+
+  // Hàm gọi khi nhận tin nhắn realtime từ SignalR
+  void _onReceiveMessage(Map<String, dynamic> message) {
+    if (message['conversationId'] == conversationId) {
+      setState(() {
+        messages.add(message);
+      });
     }
   }
 
@@ -82,7 +96,55 @@ class _CusChatContentState extends State<CusChatContent> {
   }
 
   @override
+  void dispose() {
+    // Ngắt kết nối SignalR khi màn hình bị hủy
+    SignalRService.stopConnection();
+    super.dispose();
+  }
+
+  void _sendMessage() async {
+    final content = newMessage.trim();
+    if (content.isEmpty) return;
+
+    // 🔍 Tìm receiverId từ lịch sử tin nhắn
+    final receiverId = messages.firstWhere(
+          (msg) => msg['senderId'] != userId,
+      orElse: () => null,
+    )?['senderId'];
+
+    if (receiverId == null) {
+      print("❌ Không tìm thấy receiverId từ message history");
+      return;
+    }
+
+    final fakeMessage = {
+      'content': content,
+      'senderId': userId,
+      'senderAvatar': null,
+      'createdTime': DateTime.now().toIso8601String(),
+      'conversationId': conversationId,
+    };
+
+    setState(() {
+      messages.add(fakeMessage);
+      newMessage = '';
+    });
+    _controller.clear();
+
+    try {
+      await SignalRService.sendMessage(userId, receiverId, content);
+      print("📤 Tin nhắn đã gửi qua SignalR");
+    } catch (e) {
+      print("❌ Error sending message via SignalR: $e");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final modalArgs = ModalRoute.of(context)?.settings.arguments;
+    if (onMessageSent == null && modalArgs != null && modalArgs is Map) {
+      onMessageSent = modalArgs['onMessageSent'];
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -133,7 +195,7 @@ class _CusChatContentState extends State<CusChatContent> {
                         ),
                       ),
                       ...msgs.map((msg) {
-                        final isOwn = msg['senderId'] == Id;
+                        final isOwn = msg['senderId'] == userId;
                         return Row(
                           mainAxisAlignment:
                           isOwn ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -201,18 +263,16 @@ class _CusChatContentState extends State<CusChatContent> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _controller, // ← Thêm dòng này
                       onChanged: (val) => setState(() => newMessage = val),
                       decoration: const InputDecoration.collapsed(
                         hintText: 'Nhập tin nhắn...',
                       ),
-                    ),
+                    )
                   ),
                   IconButton(
                     icon: const Icon(Icons.send, color: Color(0xFF425A41)),
-                    onPressed: () {
-                      // TODO: Gửi tin nhắn
-                      print("Send: $newMessage");
-                    },
+                    onPressed: _sendMessage,
                   )
                 ],
               ),

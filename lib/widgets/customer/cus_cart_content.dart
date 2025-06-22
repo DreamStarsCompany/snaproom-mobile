@@ -4,6 +4,8 @@ import '../../screens/customer/payment_webview.dart';
 import 'CartCard.dart';
 import '../../services/user_service.dart';
 import '../../../routes/app_routes.dart';
+import 'package:provider/provider.dart';
+import '../../providers/cart_provider.dart';
 
 class CusCartContent extends StatefulWidget {
   const CusCartContent({Key? key}) : super(key: key);
@@ -43,7 +45,9 @@ class _CusCartContentState extends State<CusCartContent> {
       final response = await UserService.getAllCart();
       if (response != null && response['data'] != null) {
         final data = response['data'];
-        if (data['orderDetails'] == null || data['orderDetails'].isEmpty) {
+        final cartItems = data['orderDetails'] ?? [];
+
+        if (cartItems.isEmpty) {
           setState(() {
             cartData = data;
             isLoading = false;
@@ -59,6 +63,10 @@ class _CusCartContentState extends State<CusCartContent> {
             isLoading = false;
             hasChanges = false;
           });
+
+          // ✅ Cập nhật Provider
+          Provider.of<CartProvider>(context, listen: false)
+              .setItemCount(cartItems.length);
         }
       } else {
         setState(() {
@@ -126,6 +134,11 @@ class _CusCartContentState extends State<CusCartContent> {
         cartData!['orderDetails'].removeAt(index);
         updateTotalPrice();
       });
+
+      // ✅ Cập nhật lại cart count sau khi xóa
+      final newCount = cartData!['orderDetails'].length;
+      Provider.of<CartProvider>(context, listen: false).setItemCount(newCount);
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Xóa sản phẩm thành công')));

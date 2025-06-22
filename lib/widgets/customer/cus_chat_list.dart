@@ -112,8 +112,19 @@ class _CusChatListContentState extends State<CusChatListContent> {
                             arguments: {
                               'conversationId': conversationId,
                               'senderName': senderName,
+                              'onMessageSent': (String msg, String time) {
+                                setState(() {
+                                  final index = conversations.indexWhere((c) => c['id'].toString() == conversationId);
+                                  if (index != -1) {
+                                    conversations[index]['lastMessage'] = msg;
+                                    conversations[index]['lastMessageTime'] = time;
+                                    filteredConversations = [...conversations];
+                                  }
+                                });
+                              },
                             },
                           );
+
                         } else {
                           print('Không có conversationId trong item');
                         }

@@ -128,14 +128,14 @@ class AppRoutes {
             ),
           );
         }
-        final conversationId = args['conversationId'] as String;
-        final senderName = args['senderName'] as String;
         return MaterialPageRoute(
           builder: (_) => CustomerChat(
-            conversationId: conversationId,
-            senderName: senderName,
+            conversationId: args['conversationId'],
+            senderName: args['senderName'],
+            onMessageSent: args['onMessageSent'], // ✅ TRUYỀN callback vào
           ),
         );
+
 
       case desChatDetail:
         final args = settings.arguments as Map<String, dynamic>?;

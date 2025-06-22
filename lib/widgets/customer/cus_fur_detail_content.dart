@@ -4,7 +4,8 @@ import '../../services/user_service.dart';
 import 'buy_menu.dart';
 import 'package:intl/intl.dart';
 import 'review_content.dart';
-
+import 'package:provider/provider.dart';
+import '../../providers/cart_provider.dart';
 
 
 class CusFurDetailContent extends StatefulWidget {
@@ -454,7 +455,7 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
               final isActive = productDetail['active'] ?? false;
 
               if (!isActive) {
-                // Nếu sản phẩm ngừng kinh doanh (active = false)
+                // Không cho thêm nếu sản phẩm hết hàng
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Sản phẩm đã hết hàng")),
                 );
@@ -468,6 +469,9 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                 );
 
                 if (response != null && response['statusCode'] == 200) {
+                  // ✅ Tăng số lượng trên badge giỏ hàng
+                  Provider.of<CartProvider>(context, listen: false).increment();
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Đã thêm vào giỏ hàng!")),
                   );

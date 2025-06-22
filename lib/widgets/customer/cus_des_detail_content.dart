@@ -3,6 +3,9 @@ import '../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 import 'buy_menu.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../providers/cart_provider.dart';
+
 
 class CusDesDetail extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -311,31 +314,33 @@ class _CusDesDetailState extends State<CusDesDetail> {
         child: SizedBox(
           height: 70, // chỉnh chiều cao phù hợp hơn
           child: BuyMenu(
-            onAddToCart: () async {
-              try {
-                final response = await UserService.addToCart(
-                  _quantity,
-                  widget.product['id'].toString(),
-                );
-
-
-                if (response != null && response['statusCode'] == 200) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Đã thêm vào giỏ hàng!")),
+              onAddToCart: () async {
+                try {
+                  final response = await UserService.addToCart(
+                    _quantity,
+                    widget.product['id'].toString(),
                   );
-                } else {
+
+                  if (response != null && response['statusCode'] == 200) {
+                    // ✅ Cập nhật cart count
+                    Provider.of<CartProvider>(context, listen: false).increment();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Đã thêm vào giỏ hàng!")),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Thêm vào giỏ thất bại: ${response['message'] ?? 'Không rõ lỗi'}")),
+                    );
+                  }
+                } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Thêm vào giỏ thất bại: ${response['message'] ?? 'Không rõ lỗi'}")),
+                    SnackBar(content: Text("Vui lòng chọn các sản phẩm có cùng nhà thiết kế")),
                   );
                 }
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Vui lòng chọn các sản phẩm có cùng nhà thiết kế")),
-                );
-              }
-            },
+              },
 
-            onBuyNow: () {
+              onBuyNow: () {
               print('Mua ngay');
             },
           ),

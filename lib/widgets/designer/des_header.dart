@@ -26,19 +26,7 @@ class DesHeader extends StatelessWidget {
             ),
 
             // Icons bên phải
-            Row(
-              children: [
-                // Chuông thông báo
-                IconButton(
-                  onPressed: () {
-                    // Xử lý khi nhấn thông báo
-                  },
-                  icon: const Icon(Icons.notifications),
-                  color: Colors.white,
-                  tooltip: 'Notifications',
-                ),
-              ],
-            ),
+
           ],
         ),
       ),

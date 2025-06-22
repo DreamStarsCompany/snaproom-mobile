@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
-import '../../../routes/app_routes.dart';  // sửa lại đúng đường dẫn của bạn
+import 'package:provider/provider.dart';
+import '../../../routes/app_routes.dart';
+import '../../providers/cart_provider.dart';
+import '../../services/user_service.dart';  // sửa lại đúng đường dẫn của bạn
 
-class CusHomeContent extends StatelessWidget {
+class CusHomeContent extends StatefulWidget {
   const CusHomeContent({Key? key}) : super(key: key);
 
+  @override
+  State<CusHomeContent> createState() => _CusHomeContentState();
+}
+
+class _CusHomeContentState extends State<CusHomeContent> {
   static const Color titleColor = Color(0xFF3F5139);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartCount(); // Gọi API ngay khi màn hình được khởi tạo
+  }
+
+  Future<void> _loadCartCount() async {
+    try {
+      final response = await UserService.getAllCart();
+      final count = response['data']['orderDetails']?.length ?? 0;
+
+      if (mounted) {
+        Provider.of<CartProvider>(context, listen: false).setItemCount(count);
+      }
+    } catch (e) {
+      debugPrint('Lỗi khi load giỏ hàng: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
