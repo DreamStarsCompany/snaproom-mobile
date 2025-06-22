@@ -21,7 +21,7 @@ class DesMenu extends StatelessWidget {
         Navigator.pushReplacementNamed(context, AppRoutes.designerOrder);
         break;
       case 2:
-        // Navigator.pushReplacementNamed(context, AppRoutes.designerMessages);
+        Navigator.pushReplacementNamed(context, AppRoutes.desChatList);
         break;
       case 3:
         Navigator.pushReplacementNamed(context, AppRoutes.designerProfile);

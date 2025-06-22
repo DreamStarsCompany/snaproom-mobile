@@ -300,7 +300,7 @@ class _CusCartContentState extends State<CusCartContent> {
                           });
                         },
                       ),
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 5),
                       DropdownButtonFormField<int>(
                         value: selectedPaymentMethod,
                         decoration: const InputDecoration.collapsed(hintText: ''),

@@ -200,5 +200,29 @@ class UserService {
     );
   }
 
+  static Future<List<dynamic>> getAllConversations() async {
+    try {
+      final response = await ApiService.get("/api/conversations");
+      if (response is List) {
+        return response;
+      } else if (response is Map && response["data"] is List) {
+        return response["data"];
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<dynamic> getConversationById(String id) async {
+    try {
+      final response = await ApiService.get("/api/conversations/$id");
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
 
 }
+
+

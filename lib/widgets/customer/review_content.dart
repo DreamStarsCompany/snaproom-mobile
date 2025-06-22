@@ -37,15 +37,35 @@ class _ReviewContentState extends State<ReviewContent> {
     );
 
     if (response != null && response['success'] == true) {
-      _commentController.clear();
-      _selectedStar = 5;
+      setState(() {
+        _commentController.clear();
+        _selectedStar = 5;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gửi đánh giá thành công!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
       widget.onSubmitted();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gửi đánh giá thành công!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
 
     setState(() {
       _isSubmitting = false;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

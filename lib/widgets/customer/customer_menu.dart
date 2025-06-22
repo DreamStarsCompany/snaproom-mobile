@@ -21,7 +21,7 @@ class CustomerMenu extends StatelessWidget {
         Navigator.pushReplacementNamed(context, AppRoutes.customerOrder);
         break;
       case 2:
-        // Navigator.pushReplacementNamed(context, AppRoutes.designerMessages);
+        Navigator.pushReplacementNamed(context, AppRoutes.chatList);
         break;
       case 3:
         Navigator.pushReplacementNamed(context, AppRoutes.customerProfile);
