@@ -9,6 +9,7 @@ class CusChatContent extends StatefulWidget {
   final String conversationId;
   final String senderName;
   final Function(String, String)? onMessageSent;
+
   const CusChatContent({
     Key? key,
     required this.conversationId,
@@ -18,7 +19,6 @@ class CusChatContent extends StatefulWidget {
 
   @override
   State<CusChatContent> createState() => _CusChatContentState();
-
 }
 
 class _CusChatContentState extends State<CusChatContent> {
@@ -52,6 +52,7 @@ class _CusChatContentState extends State<CusChatContent> {
 
         // Khởi tạo SignalR và lắng nghe tin nhắn realtime
         await SignalRService.startConnection(token, _onReceiveMessage);
+        await SignalRService.joinConversation(widget.conversationId);
       } catch (e) {
         print("Error decoding token or starting SignalR: $e");
       }
@@ -61,8 +62,20 @@ class _CusChatContentState extends State<CusChatContent> {
   // Hàm gọi khi nhận tin nhắn realtime từ SignalR
   void _onReceiveMessage(Map<String, dynamic> message) {
     if (message['conversationId'] == conversationId) {
+      // 👉 Gắn avatar nếu không có
+      final senderId = message['senderId'];
+      final existingMsg = messages.firstWhere(
+        (m) => m['senderId'] == senderId && m['senderAvatar'] != null,
+        orElse: () => null,
+      );
+
+      final enrichedMsg = Map<String, dynamic>.from(message);
+      if (enrichedMsg['senderAvatar'] == null && existingMsg != null) {
+        enrichedMsg['senderAvatar'] = existingMsg['senderAvatar'];
+      }
+
       setState(() {
-        messages.add(message);
+        messages.add(enrichedMsg);
       });
     }
   }
@@ -106,29 +119,18 @@ class _CusChatContentState extends State<CusChatContent> {
     final content = newMessage.trim();
     if (content.isEmpty) return;
 
-    // 🔍 Tìm receiverId từ lịch sử tin nhắn
-    final receiverId = messages.firstWhere(
+    final receiverId =
+        messages.firstWhere(
           (msg) => msg['senderId'] != userId,
-      orElse: () => null,
-    )?['senderId'];
+          orElse: () => null,
+        )?['senderId'];
 
     if (receiverId == null) {
       print("❌ Không tìm thấy receiverId từ message history");
       return;
     }
 
-    final fakeMessage = {
-      'content': content,
-      'senderId': userId,
-      'senderAvatar': null,
-      'createdTime': DateTime.now().toIso8601String(),
-      'conversationId': conversationId,
-    };
-
-    setState(() {
-      messages.add(fakeMessage);
-      newMessage = '';
-    });
+    setState(() => newMessage = '');
     _controller.clear();
 
     try {
@@ -174,84 +176,127 @@ class _CusChatContentState extends State<CusChatContent> {
               ),
             ),
             Expanded(
-              child: isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView(
-                reverse: true,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                children: groupByDate(messages).entries.toList().reversed.map((entry) {
-                  final date = entry.key;
-                  final msgs = entry.value;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            date,
-                            style: const TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
+              child:
+                  isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView(
+                        reverse: true,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
-                      ),
-                      ...msgs.map((msg) {
-                        final isOwn = msg['senderId'] == userId;
-                        return Row(
-                          mainAxisAlignment:
-                          isOwn ? MainAxisAlignment.end : MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (!isOwn)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 6),
-                                child: CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage: msg['senderAvatar'] != null
-                                      ? NetworkImage(msg['senderAvatar'])
-                                      : null,
-                                  child: msg['senderAvatar'] == null
-                                      ? const Icon(Icons.person, size: 16)
-                                      : null,
-                                ),
-                              ),
-                            Container(
-                              margin: const EdgeInsets.symmetric(vertical: 6),
-                              padding: const EdgeInsets.all(12),
-                              constraints: BoxConstraints(
-                                  maxWidth: MediaQuery.of(context).size.width * 0.7),
-                              decoration: BoxDecoration(
-                                color: isOwn ? const Color(0xFF3F5139) : const Color(0xFFF4F4F4),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: isOwn
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
+                        children:
+                            groupByDate(
+                              messages,
+                            ).entries.toList().reversed.map((entry) {
+                              final date = entry.key;
+                              final msgs = entry.value;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Text(
-                                    msg['content'],
-                                    style: TextStyle(
-                                      color: isOwn ? Colors.white : Colors.black87,
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8,
+                                      ),
+                                      child: Text(
+                                        date,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    formatTime(msg['createdTime']),
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: isOwn ? Colors.white70 : Colors.grey,
-                                    ),
-                                  ),
+                                  ...msgs.map((msg) {
+                                    final isOwn = msg['senderId'] == userId;
+                                    return Row(
+                                      mainAxisAlignment:
+                                          isOwn
+                                              ? MainAxisAlignment.end
+                                              : MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        if (!isOwn)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 6,
+                                            ),
+                                            child: CircleAvatar(
+                                              radius: 16,
+                                              backgroundImage:
+                                                  msg['senderAvatar'] != null
+                                                      ? NetworkImage(
+                                                        msg['senderAvatar'],
+                                                      )
+                                                      : null,
+                                              child:
+                                                  msg['senderAvatar'] == null
+                                                      ? const Icon(
+                                                        Icons.person,
+                                                        size: 16,
+                                                      )
+                                                      : null,
+                                            ),
+                                          ),
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            vertical: 6,
+                                          ),
+                                          padding: const EdgeInsets.all(12),
+                                          constraints: BoxConstraints(
+                                            maxWidth:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.width *
+                                                0.7,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                isOwn
+                                                    ? const Color(0xFF3F5139)
+                                                    : const Color(0xFFF4F4F4),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                isOwn
+                                                    ? CrossAxisAlignment.end
+                                                    : CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                msg['content'],
+                                                style: TextStyle(
+                                                  color:
+                                                      isOwn
+                                                          ? Colors.white
+                                                          : Colors.black87,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                formatTime(msg['createdTime']),
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  color:
+                                                      isOwn
+                                                          ? Colors.white70
+                                                          : Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
                                 ],
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ],
-                  );
-                }).toList(),
-              ),
+                              );
+                            }).toList(),
+                      ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -268,12 +313,12 @@ class _CusChatContentState extends State<CusChatContent> {
                       decoration: const InputDecoration.collapsed(
                         hintText: 'Nhập tin nhắn...',
                       ),
-                    )
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.send, color: Color(0xFF425A41)),
                     onPressed: _sendMessage,
-                  )
+                  ),
                 ],
               ),
             ),

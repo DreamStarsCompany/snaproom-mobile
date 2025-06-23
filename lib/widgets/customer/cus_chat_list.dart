@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../routes/app_routes.dart';
 import '../../services/user_service.dart';
 
@@ -24,10 +26,25 @@ class _CusChatListContentState extends State<CusChatListContent> {
 
   Future<void> fetchConversations() async {
     setState(() => isLoading = true);
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    String userId = '';
+    if (token != null && token.isNotEmpty) {
+      final decoded = JwtDecoder.decode(token);
+      userId = decoded['Id'] ?? decoded['sub'] ?? '';
+    }
+
     final data = await UserService.getAllConversations();
+    final filtered = data.where((conv) {
+      final senderId = conv['sender']?['id']?.toString();
+      final receiverId = conv['receiver']?['id']?.toString();
+      return !(senderId == userId && receiverId == userId);
+    }).toList();
+
     setState(() {
-      conversations = data;
-      filteredConversations = data;
+      conversations = filtered;
+      filteredConversations = filtered;
       isLoading = false;
     });
   }

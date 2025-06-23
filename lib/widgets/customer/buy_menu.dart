@@ -71,7 +71,7 @@ class BuyMenu extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildButton(index: 0, label: 'Liên hệ', icon: Icons.phone, onTap: onContact),
+          _buildButton(index: 0, label: 'Liên hệ', icon: Icons.chat, onTap: onContact),
           _buildButton(index: 1, label: 'Thêm vào giỏ', icon: Icons.add_shopping_cart, onTap: onAddToCart),
           _buildButton(index: 2, label: 'Mua ngay', icon: Icons.shopping_bag, onTap: onBuyNow),
         ],
