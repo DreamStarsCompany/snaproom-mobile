@@ -4,12 +4,14 @@ import '../../widgets/customer/cus_chat_content.dart';
 class CustomerChat extends StatelessWidget {
   final String conversationId;
   final String senderName;
+  final String? designerId;
   final Function(String, String)? onMessageSent;
 
   const CustomerChat({
     super.key,
     required this.conversationId,
     required this.senderName,
+    this.designerId,
     this.onMessageSent,
   });
 
@@ -20,6 +22,7 @@ class CustomerChat extends StatelessWidget {
       body: CusChatContent(
         conversationId: conversationId,
         senderName: senderName,
+        designerId: designerId, // ✅ truyền thêm
         onMessageSent: onMessageSent,
       ),
     );

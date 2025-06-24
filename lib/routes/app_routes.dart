@@ -119,7 +119,7 @@ class AppRoutes {
       case desChatList:
         return MaterialPageRoute(builder: (_) => const DesignerChatList());
 
-      case chatDetail:
+      case AppRoutes.chatDetail:
         final args = settings.arguments as Map<String, dynamic>?;
         if (args == null || args['conversationId'] == null || args['senderName'] == null) {
           return MaterialPageRoute(
@@ -128,14 +128,15 @@ class AppRoutes {
             ),
           );
         }
+
         return MaterialPageRoute(
           builder: (_) => CustomerChat(
-            conversationId: args['conversationId'],
-            senderName: args['senderName'],
-            onMessageSent: args['onMessageSent'], // ✅ TRUYỀN callback vào
+            conversationId: args['conversationId'] ?? '',
+            senderName: args['senderName'] ?? 'Không rõ',
+            designerId: args.containsKey('designerId') ? args['designerId'] : null, // ✅ kiểm tra an toàn
+            onMessageSent: args['onMessageSent'],
           ),
         );
-
 
       case desChatDetail:
         final args = settings.arguments as Map<String, dynamic>?;

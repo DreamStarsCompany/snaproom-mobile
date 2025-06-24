@@ -155,25 +155,6 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                           ],
                         ),
                         const SizedBox(height: 6),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Nhà thiết kế:',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Text(
-                              designerName,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
 
                         const SizedBox(height: 20),
                         const Text(
@@ -277,6 +258,85 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                 ],
               ),
             ),
+
+            // Ngăn cách
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.zero,
+              color: const Color(0xFFF4F4F4),
+              height: 10,
+            ),
+            const SizedBox(height: 16),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Avatar
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundImage: product['designer']?['avatarSource'] != null
+                        ? NetworkImage(product['designer']['avatarSource'])
+                        : null,
+                    child: product['designer']?['avatarSource'] == null
+                        ? const Icon(Icons.person, size: 28)
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Tên và chữ "Nhà thiết kế"
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product['designer']?['name'] ?? 'Không rõ',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          'Nhà thiết kế',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Icon chat
+                  IconButton(
+                    icon: const Icon(Icons.chat, color: Color(0xFF3F5139)),
+                    onPressed: () {
+                      final designer = product['designer'];
+                      final designerId = designer?['id'];
+                      final designerName = designer?['name'] ?? 'Không rõ';
+
+                      if (designerId == null) return;
+
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.chatDetail,
+                        arguments: {
+                          'conversationId': '',
+                          'senderName': designerName,
+                          'designerId': designerId,
+                        },
+                      );
+
+                    },
+                  ),
+
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
             Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.zero,

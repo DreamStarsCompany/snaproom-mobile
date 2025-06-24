@@ -223,6 +223,16 @@ class UserService {
     }
   }
 
+  static Future<dynamic> getConversationWithReceiver(String receiverId) async {
+    try {
+      final response = await ApiService.get("/api/conversations/receiver/$receiverId");
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
+
 }
 
 
