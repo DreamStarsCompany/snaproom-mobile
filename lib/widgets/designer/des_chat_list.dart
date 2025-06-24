@@ -86,7 +86,12 @@ class _DesChatListContentState extends State<DesChatListContent> {
                             : AssetImage("assets/default_avatar.png") as ImageProvider,
                       ),
                       title: Text(sender['name']),
-                      subtitle: Text(item['lastMessage'] ?? ''),
+                      subtitle: Text(
+                        item['lastMessage'] ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
                       trailing: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.end,
