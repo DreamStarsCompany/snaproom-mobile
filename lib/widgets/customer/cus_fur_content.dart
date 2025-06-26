@@ -176,7 +176,7 @@ class _CusFurContentState extends State<CusFurContent> {
         crossAxisCount: 2,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
-        childAspectRatio: 0.75,
+        childAspectRatio: 0.7,
       ),
       itemCount: _filteredDesigns.length,
       itemBuilder: (context, index) {
