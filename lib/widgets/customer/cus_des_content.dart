@@ -170,7 +170,7 @@ class _CusDesContentState extends State<CusDesContent> {
               ],
             ),
             child: SizedBox(
-              height: 300,
+              height: 400,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -207,10 +207,45 @@ class _CusDesContentState extends State<CusDesContent> {
                               Text('$rating', style: const TextStyle(fontSize: 14)),
                             ],
                           ),
+                          const SizedBox(height: 6),
+                          SizedBox(
+                            height: 22,
+                            child: Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              children: (() {
+                                final style = item['style']?['name']?.toString();
+                                final categories = (item['categories'] as List<dynamic>? ?? [])
+                                    .map((cat) => cat['name'].toString())
+                                    .toList();
+
+                                final List<String> allTags = [];
+                                if (style != null) allTags.add(style);
+                                allTags.addAll(categories);
+
+                                final visibleTags = allTags.take(4); // giới hạn 4 tag (tuỳ bạn điều chỉnh)
+
+                                return visibleTags.map((tag) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE0E0E0),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      tag,
+                                      style: const TextStyle(fontSize: 11, color: Colors.black87),
+                                    ),
+                                  );
+                                }).toList();
+                              })(),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
+
                 ],
               ),
             ),

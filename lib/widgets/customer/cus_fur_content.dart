@@ -238,29 +238,88 @@ class _CusFurContentState extends State<CusFurContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 13)),
-                        const SizedBox(height: 8),
-                        Text('Giá: ${formatCurrency(price)}',
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 11)),
-                        const SizedBox(height: 8),
+                        Text(
+                          name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Giá: ${formatCurrency(price)}',
+                          style: const TextStyle(color: Colors.grey, fontSize: 11),
+                        ),
+                        const SizedBox(height: 6),
                         Row(
                           children: [
-                            const Icon(Icons.star,
-                                color: Colors.orange, size: 12),
+                            const Icon(Icons.star, color: Colors.orange, size: 12),
                             const SizedBox(width: 4),
-                            Text('$rating',
-                                style: const TextStyle(fontSize: 11)),
+                            Text('$rating', style: const TextStyle(fontSize: 11)),
                           ],
+                        ),
+                        const SizedBox(height: 6),
+
+                        // 🏷️ Style + Categories hiển thị tag
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final style = item['style']?['name']?.toString();
+                              final categories = (item['categories'] as List<dynamic>? ?? [])
+                                  .map((cat) => cat['name'].toString())
+                                  .toList();
+                              final List<String> allTags = [];
+                              if (style != null) allTags.add(style);
+                              allTags.addAll(categories);
+
+                              return SingleChildScrollView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: SizedBox(
+                                  height: 40, // Giới hạn chiều cao để chỉ hiện khoảng 2 dòng tag
+                                  child: Wrap(
+                                    spacing: 4,
+                                    runSpacing: 4,
+                                    children: (() {
+                                      final style = item['style']?['name']?.toString();
+                                      final categories = (item['categories'] as List<dynamic>? ?? [])
+                                          .map((cat) => cat['name'].toString())
+                                          .toList();
+                                      final List<String> allTags = [];
+                                      if (style != null) allTags.add(style);
+                                      allTags.addAll(categories);
+
+                                      return allTags.map((tag) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE0E0E0),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Text(
+                                            tag,
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList();
+                                    })(),
+                                  ),
+                                ),
+
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
+
+
               ],
             ),
           ),

@@ -22,11 +22,14 @@ class _CusDesignerProductState extends State<CusDesignerProduct> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   bool _isLoading = false;
+  String _selectedType = 'Nội thất';
+  final List<String> _typeOptions = ['Nội thất', 'Thiết kế'];
+
 
   @override
   void initState() {
     super.initState();
-    _fetchDesignerFurnitures();
+    _fetchDesignerProducts();
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -42,32 +45,45 @@ class _CusDesignerProductState extends State<CusDesignerProduct> {
     return formatter.format(amount);
   }
 
-  Future<void> _fetchDesignerFurnitures() async {
+  Future<void> _fetchDesignerProducts() async {
     setState(() => _isLoading = true);
 
     try {
-      final response = await UserService.getFurnituresByDesignerId(widget.designerId);
-      if (response != null && response['data'] != null) {
-        final items = response['data']['items'] ?? [];
+      List<dynamic> approved = [];
 
-        // Lọc các sản phẩm đã được duyệt
-        List<dynamic> approved = [];
-        for (var item in items) {
-          final detail = await UserService.getProductById(item['id']);
-          if (detail?['data']?['approved'] == true) {
-            approved.add(item);
+      if (_selectedType == 'Nội thất') {
+        final response = await UserService.getFurnituresByDesignerId(widget.designerId);
+        if (response != null && response['data'] != null) {
+          final items = response['data']['items'] ?? [];
+          for (var item in items) {
+            final detail = await UserService.getProductById(item['id']);
+            if (detail?['data']?['approved'] == true) {
+              approved.add(item);
+            }
           }
         }
-
-        setState(() {
-          _originalList = approved;
-          _filteredList = approved;
-        });
+      } else {
+        final response = await UserService.getDesignsByDesignerId(widget.designerId);
+        if (response != null && response['data'] != null) {
+          final items = response['data']['items'] ?? [];
+          for (var item in items) {
+            final detail = await UserService.getProductById(item['id']);
+            if (detail?['data']?['approved'] == true) {
+              approved.add(item);
+            }
+          }
+        }
       }
+
+      setState(() {
+        _originalList = approved;
+        _filteredList = approved;
+      });
     } finally {
       setState(() => _isLoading = false);
     }
   }
+
 
   void _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
@@ -196,7 +212,7 @@ class _CusDesignerProductState extends State<CusDesignerProduct> {
                         controller: _searchController,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                          hintText: 'Tìm kiếm...',
+                          hintText: 'Tìm kiếm sản phẩm...',
                           fillColor: Colors.grey[200],
                           filled: true,
                           prefixIcon: const Icon(Icons.search),
@@ -208,9 +224,40 @@ class _CusDesignerProductState extends State<CusDesignerProduct> {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: kPrimaryDarkGreen, width: 1),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedType,
+                        icon: const Icon(Icons.arrow_drop_down, color: kPrimaryDarkGreen),
+                        style: const TextStyle(color: kPrimaryDarkGreen, fontWeight: FontWeight.bold),
+                        dropdownColor: Colors.white,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedType = newValue!;
+                          });
+                          _fetchDesignerProducts(); // gọi lại API theo loại mới
+                        },
+                        items: _typeOptions
+                            .map((type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(type, overflow: TextOverflow.ellipsis),
+                        ))
+                            .toList(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
+
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())

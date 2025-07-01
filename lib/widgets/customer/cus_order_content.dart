@@ -178,72 +178,72 @@ class _CusOrderContentState extends State<CusOrderContent> {
         child: Column(
           children: [
             // Search + Status dropdown
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(
-                          context, AppRoutes.customerHomepage);
-                    },
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      height: 40,
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                          hintText: 'Tìm kiếm mã đơn hàng...',
-                          fillColor: Colors.grey[200],
-                          filled: true,
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, AppRoutes.customerHomepage);
+                      },
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        height: 40,
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                            hintText: 'Tìm kiếm mã đơn hàng...',
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Dropdown trạng thái
-                  Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: kPrimaryDarkGreen, width: 1),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _selectedStatus,
-                        icon: const Icon(Icons.arrow_drop_down, color: kPrimaryDarkGreen),
-                        style: const TextStyle(
-                            color: kPrimaryDarkGreen, fontWeight: FontWeight.bold),
-                        dropdownColor: Colors.white,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedStatus = newValue!;
-                            _applyFilterAndSort();
-                          });
-                        },
-                        items: _statusOptions
-                            .map((status) => DropdownMenuItem(
-                          value: status,
-                          child: Text(status, overflow: TextOverflow.ellipsis),
-                        ))
-                            .toList(),
+                    const SizedBox(width: 8),
+                    // Dropdown trạng thái
+                    Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: kPrimaryDarkGreen, width: 1),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedStatus,
+                          icon: const Icon(Icons.arrow_drop_down, color: kPrimaryDarkGreen),
+                          style: const TextStyle(
+                              color: kPrimaryDarkGreen, fontWeight: FontWeight.bold),
+                          dropdownColor: Colors.white,
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedStatus = newValue!;
+                              _applyFilterAndSort();
+                            });
+                          },
+                          items: _statusOptions
+                              .map((status) => DropdownMenuItem(
+                            value: status,
+                            child: Text(status, overflow: TextOverflow.ellipsis),
+                          ))
+                              .toList(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
             // Sort bar
             _buildSortBar(),
