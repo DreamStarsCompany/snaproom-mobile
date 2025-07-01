@@ -232,6 +232,38 @@ class UserService {
     }
   }
 
+  static Future<dynamic> getAllAccounts({
+    required int role,
+    int pageNumber = -1,
+    int pageSize = -1,
+  }) async {
+    return await ApiService.get("/api/accounts", params: {
+      "role": role.toString(),
+      "pageNumber": pageNumber.toString(),
+      "pageSize": pageSize.toString(),
+    });
+  }
+
+  static Future<dynamic> getFurnituresByDesignerId(String designerId, {int pageNumber = -1, int pageSize = -1}) async {
+    return await ApiService.get(
+      "/api/designerid/$designerId/furnitures",
+      params: {
+        "pageNumber": pageNumber.toString(),
+        "pageSize": pageSize.toString(),
+      },
+    );
+  }
+
+  static Future<dynamic> getDesignsByDesignerId(String designerId, {int pageNumber = -1, int pageSize = -1}) async {
+    return await ApiService.get(
+      "/api/designerid/$designerId/designs",
+      params: {
+        "pageNumber": pageNumber.toString(),
+        "pageSize": pageSize.toString(),
+      },
+    );
+  }
+
 
 }
 

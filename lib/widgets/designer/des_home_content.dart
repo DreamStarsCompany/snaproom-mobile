@@ -110,7 +110,7 @@ class DesHomeContent extends StatelessWidget {
                   context,
                   'assets/images/cus_home_connect.png',
                   'TRÒ CHUYỆN',
-                  AppRoutes.designerDashboard,
+                  AppRoutes.desChatList,
                 ),
               ],
             ),

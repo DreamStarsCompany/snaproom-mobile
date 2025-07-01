@@ -23,6 +23,9 @@ import '../screens/customer/customer_chat_list.dart';
 import '../screens/customer/customer_chat.dart';
 import '../screens/designer/designer_chat_list.dart';
 import '../screens/designer/designer_chat.dart';
+import '../screens/customer/customer_designers.dart';
+import '../screens/customer/customer_des_product.dart';
+
 
 class AppRoutes {
   static const String login = '/';
@@ -49,6 +52,8 @@ class AppRoutes {
   static const String chatDetail = '/chatDetail';
   static const String desChatList = '/desChatList';
   static const String desChatDetail = '/desChatDetail';
+  static const String customerDesigners = '/customerDesigners';
+  static const String customerDesignerProduct = '/customerDesignerProduct';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -69,6 +74,12 @@ class AppRoutes {
 
       case customerProfile:
         return MaterialPageRoute(builder: (_) => const CustomerProfile());
+
+      case customerDesignerProduct:
+        final designerId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => CustomerDesignerProduct(designerId: designerId),
+        );
 
       case customerDesign:
         return MaterialPageRoute(builder: (_) => const CustomerDesign());
@@ -102,6 +113,9 @@ class AppRoutes {
 
       case customerOrder:
         return MaterialPageRoute(builder: (_) => const CustomerOrder());
+
+      case customerDesigners:
+        return MaterialPageRoute(builder: (_) => const CustomerDesigners());
 
       case customerOrderDetail:
         final orderId = settings.arguments as String? ?? '';
