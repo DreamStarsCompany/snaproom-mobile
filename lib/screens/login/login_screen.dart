@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/user_service.dart';
@@ -48,9 +50,12 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Response from server: $response");
 
       if (response != null && response['statusCode'] == 200) {
-        final token = response['data']; // Đây là chuỗi token JWT
+        final token = response['data'];
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token); // Lưu lại để dùng sau
+        await prefs.setString('token', token);
+        final decodedToken = _parseJwt(token);
+        final role = decodedToken['role'];
+        await prefs.setString('role', role.toString());
         _showMessage("Đăng nhập thành công");
 
         if (selectedIndex == 0) {
@@ -75,6 +80,23 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       print("== LOGIN END ==");
     }
+  }
+
+  Map<String, dynamic> _parseJwt(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      throw Exception('Invalid JWT');
+    }
+
+    final payload = parts[1];
+    final normalized = base64Url.normalize(payload);
+    final payloadMap = json.decode(utf8.decode(base64Url.decode(normalized)));
+
+    if (payloadMap is! Map<String, dynamic>) {
+      throw Exception('Invalid payload');
+    }
+
+    return payloadMap;
   }
 
   void _showMessage(String message) {

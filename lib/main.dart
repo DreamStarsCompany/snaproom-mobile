@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'auth_wrapper.dart';
 import 'routes/app_routes.dart';
 import 'providers/cart_provider.dart';
 
@@ -21,8 +22,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SnapRoom',
-      initialRoute: AppRoutes.login,
+      initialRoute: '/',
       onGenerateRoute: AppRoutes.generateRoute,
+      home: const AuthWrapper(),
       debugShowCheckedModeBanner: false,
     );
   }

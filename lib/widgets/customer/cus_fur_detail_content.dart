@@ -158,37 +158,41 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                if (product['style']?['name'] != null)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green[100],
-                                      borderRadius: BorderRadius.circular(8),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  if (product['style']?['name'] != null)
+                                    Container(
+                                      margin: const EdgeInsets.only(right: 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green[100],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        product['style']['name'],
+                                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                                      ),
                                     ),
-                                    child: Text(
-                                      product['style']['name'],
-                                      style: const TextStyle(fontSize: 13, color: Colors.black87),
-                                    ),
-                                  ),
-                                ...(product['categories'] ?? []).map<Widget>((cat) {
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green[100],
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      cat['name'] ?? '',
-                                      style: const TextStyle(fontSize: 13, color: Colors.black87),
-                                    ),
-                                  );
-                                }).toList(),
-                              ],
+                                  ...((product['categories'] ?? []) as List<dynamic>).map<Widget>((cat) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(right: 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green[100],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        cat['name'] ?? '',
+                                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              ),
                             ),
+
                             const SizedBox(height: 20),
                           ],
                         ),

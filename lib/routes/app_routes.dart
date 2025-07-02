@@ -28,7 +28,7 @@ import '../screens/customer/customer_des_product.dart';
 
 
 class AppRoutes {
-  static const String login = '/';
+  static const String login = '/login';
   static const String register = '/register';
   static const String customerHomepage = '/customerHomepage';
   static const String designerDashboard = '/designerDashboard';

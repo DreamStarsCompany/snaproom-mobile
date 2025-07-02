@@ -120,7 +120,6 @@ class CartCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Nút xóa luôn hiển thị ở vị trí này
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.redAccent),
                       onPressed: onRemoveItem,

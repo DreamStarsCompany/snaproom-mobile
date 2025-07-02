@@ -176,7 +176,7 @@ class _CusFurContentState extends State<CusFurContent> {
         crossAxisCount: 2,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
-        childAspectRatio: 0.7,
+        childAspectRatio: 0.65,
       ),
       itemCount: _filteredDesigns.length,
       itemBuilder: (context, index) {
@@ -275,41 +275,26 @@ class _CusFurContentState extends State<CusFurContent> {
                               allTags.addAll(categories);
 
                               return SingleChildScrollView(
-                                physics: const NeverScrollableScrollPhysics(),
-                                child: SizedBox(
-                                  height: 40, // Giới hạn chiều cao để chỉ hiện khoảng 2 dòng tag
-                                  child: Wrap(
-                                    spacing: 4,
-                                    runSpacing: 4,
-                                    children: (() {
-                                      final style = item['style']?['name']?.toString();
-                                      final categories = (item['categories'] as List<dynamic>? ?? [])
-                                          .map((cat) => cat['name'].toString())
-                                          .toList();
-                                      final List<String> allTags = [];
-                                      if (style != null) allTags.add(style);
-                                      allTags.addAll(categories);
-
-                                      return allTags.map((tag) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFE0E0E0),
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Text(
-                                            tag,
-                                            style: const TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        );
-                                      }).toList();
-                                    })(),
-                                  ),
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: allTags.map((tag) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(right: 4),
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFE0E0E0),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        tag,
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-
                               );
                             },
                           ),
