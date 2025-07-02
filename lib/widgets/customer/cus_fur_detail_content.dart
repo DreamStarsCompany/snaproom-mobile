@@ -178,7 +178,7 @@ class _CusFurDetailContentState extends State<CusFurDetailContent> {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: Colors.blue[100],
+                                      color: Colors.green[100],
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(

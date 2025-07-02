@@ -86,7 +86,7 @@ class _CusDesignerListState extends State<CusDesignerList> {
       ),
       itemBuilder: (context, index) {
         final designer = _filteredDesigners[index];
-        final avatar = designer['AvatarSource'];
+        final avatar = designer['avatarSource'];
         final name = designer['name'] ?? 'Chưa có tên';
         final email = designer['email'] ?? '';
 
