@@ -27,6 +27,7 @@ class _CusChatListContentState extends State<CusChatListContent> {
   Future<void> fetchConversations() async {
     setState(() => isLoading = true);
 
+    //decode id người dùng để lấy danh sách chat by id
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     String userId = '';

@@ -47,7 +47,7 @@
       onMessageSent = widget.onMessageSent;
     }
 
-
+    //lấy nếu đã có + tạo nếu chưa có
     Future<void> _createOrGetConversation(String designerId) async {
       try {
         print("Gọi API tạo/lấy conversation với designerId: $designerId");
@@ -71,6 +71,7 @@
       }
     }
 
+    //decode id để xác định người gửi + người nhận
     Future<void> _initUserAndSignalR() async {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
@@ -82,7 +83,6 @@
             userId = extractedId;
           });
 
-          // Khởi tạo SignalR và lắng nghe tin nhắn realtime
           await SignalRService.startConnection(token, _onReceiveMessage);
           await SignalRService.joinConversation(conversationId);
         } catch (e) {
@@ -91,7 +91,7 @@
       }
     }
 
-    // Hàm gọi khi nhận tin nhắn realtime từ SignalR
+    //xác định người nhận với người gửi để chia tin nhắn ra 2 bên trái phải
     void _onReceiveMessage(Map<String, dynamic> message) {
       if (message['conversationId'] == conversationId) {
         final senderId = message['senderId'];
@@ -111,6 +111,7 @@
       }
     }
 
+    //lấy thông tin cuộc trò chuyện (nếu đã có lịch sử chat)
     Future<void> fetchConversation() async {
       if (conversationId.isEmpty) return;
       setState(() => isLoading = true);
@@ -121,16 +122,19 @@
       });
     }
 
+    //thời gian gửi của từng tin nhắn
     String formatTime(String iso) {
       final dt = DateTime.parse(iso);
       return DateFormat.Hm().format(dt);
     }
 
+    //ngày tháng gửi của từng tin nhắn
     String formatDate(String iso) {
       final dt = DateTime.parse(iso);
       return DateFormat('dd/MM/yyyy').format(dt);
     }
 
+    //group các tin nhắn theo ngày tháng để hiện ngày tháng duy nhất 1 lần
     Map<String, List<dynamic>> groupByDate(List<dynamic> msgs) {
       Map<String, List<dynamic>> grouped = {};
       for (var msg in msgs) {
@@ -142,7 +146,7 @@
 
     @override
     void dispose() {
-      // Ngắt kết nối SignalR khi màn hình bị hủy
+      //ngắt kết nối SignalR khi màn hình bị hủy
       SignalRService.stopConnection();
       super.dispose();
     }
@@ -345,7 +349,7 @@
                   children: [
                     Expanded(
                       child: TextField(
-                        controller: _controller, // ← Thêm dòng này
+                        controller: _controller,
                         onChanged: (val) => setState(() => newMessage = val),
                         decoration: const InputDecoration.collapsed(
                           hintText: 'Nhập tin nhắn...',

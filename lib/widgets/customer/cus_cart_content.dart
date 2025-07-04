@@ -33,6 +33,7 @@ class _CusCartContentState extends State<CusCartContent> {
     loadCart();
   }
 
+  //ép kiểu cho giá, số lượng, method thanh toán
   int parseInt(dynamic value) {
     if (value is int) return value;
     if (value is double) return value.toInt();
@@ -40,6 +41,7 @@ class _CusCartContentState extends State<CusCartContent> {
     return 0;
   }
 
+  // get all cart
   Future<void> loadCart() async {
     try {
       final response = await UserService.getAllCart();
@@ -64,7 +66,7 @@ class _CusCartContentState extends State<CusCartContent> {
             hasChanges = false;
           });
 
-          // ✅ Cập nhật Provider
+          //Cập nhật provider
           Provider.of<CartProvider>(context, listen: false)
               .setItemCount(cartItems.length);
         }
@@ -82,6 +84,7 @@ class _CusCartContentState extends State<CusCartContent> {
     }
   }
 
+  //thay đổi tổng giá khi thay đổi số lượng
   void updateTotalPrice() {
     int total = 0;
     for (var detail in cartData!['orderDetails']) {
@@ -94,6 +97,7 @@ class _CusCartContentState extends State<CusCartContent> {
     cartData!['orderPrice'] = total;
   }
 
+  //tăng số lượng
   void onIncreaseQuantity(int index) {
     setState(() {
       cartData!['orderDetails'][index]['quantity']++;
@@ -102,6 +106,7 @@ class _CusCartContentState extends State<CusCartContent> {
     });
   }
 
+  //method thanh toán
   String getPaymentMethodText(dynamic method) {
     int value = parseInt(method);
     switch (value) {
@@ -114,6 +119,7 @@ class _CusCartContentState extends State<CusCartContent> {
     }
   }
 
+  //giảm số lượng
   void onDecreaseQuantity(int index) {
     setState(() {
       int current = parseInt(cartData!['orderDetails'][index]['quantity']);
@@ -125,6 +131,7 @@ class _CusCartContentState extends State<CusCartContent> {
     });
   }
 
+  //xóa item khỏi cart
   void onRemoveItem(int index) async {
     final productId = cartData!['orderDetails'][index]['product']['id'];
 
@@ -148,6 +155,7 @@ class _CusCartContentState extends State<CusCartContent> {
     }
   }
 
+  //lưu thông tin ship + method thanh toán
   Future<void> saveCartInfo() async {
     try {
       final response = await UserService.updateCartInfo(
@@ -166,7 +174,7 @@ class _CusCartContentState extends State<CusCartContent> {
     }
   }
 
-
+  //lưu khi thay đổi số lượng của 1 sản phẩm
   Future<void> saveCartChanges() async {
     try {
       List<Map<String, dynamic>> updatedItems =
@@ -197,6 +205,7 @@ class _CusCartContentState extends State<CusCartContent> {
 
   @override
   Widget build(BuildContext context) {
+    //chỉnh format tiền về vnd
     final formatCurrency = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
     return Scaffold(
@@ -211,6 +220,7 @@ class _CusCartContentState extends State<CusCartContent> {
           },
         ),
         actions: [
+          //hiện nút lưu khi có thay đổi về số lượng
           if (hasChanges)
             Padding(
               padding: const EdgeInsets.only(right: 12),
@@ -331,6 +341,7 @@ class _CusCartContentState extends State<CusCartContent> {
                         },
                       ),
 
+                      //hiện nút lưu khi có thay đổi thông tin ship + method thanh toán
                       if (hasInfoChanges)
                         Align(
                           alignment: Alignment.centerRight,
@@ -370,6 +381,7 @@ class _CusCartContentState extends State<CusCartContent> {
                 final isDesign = product['isDesign'] == true;
                 final imageUrl = product['primaryImage']?['imageSource'];
 
+                //truyền thông tin qua widget giao diện của 1 sản phẩm
                 return CartCard(
                   productName: product['name'],
                   productImageUrl: imageUrl,
@@ -419,6 +431,8 @@ class _CusCartContentState extends State<CusCartContent> {
             ),
           ),
           const SizedBox(height: 16),
+
+          //payos
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: SizedBox(

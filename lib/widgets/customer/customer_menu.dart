@@ -10,7 +10,6 @@ class CustomerMenu extends StatelessWidget {
   }) : super(key: key);
 
   void _handleTap(BuildContext context, int index) {
-    // Chỉ điều hướng nếu chọn mục khác
     if (index == selectedIndex) return;
 
     switch (index) {

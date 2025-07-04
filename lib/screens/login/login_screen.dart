@@ -49,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print("Response from server: $response");
 
+      //login thành công thì lưu thông tin vào pref
       if (response != null && response['statusCode'] == 200) {
         final token = response['data'];
         final prefs = await SharedPreferences.getInstance();
@@ -58,10 +59,14 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setString('role', role.toString());
         _showMessage("Đăng nhập thành công");
 
+        //nút switch chọn khách hàng
         if (selectedIndex == 0) {
           print("Navigating to Customer Homepage");
           Navigator.pushReplacementNamed(context, AppRoutes.customerHomepage);
-        } else {
+
+        }
+        //nút switch chọn nhà thiết kế
+        else {
           print("Navigating to Designer Homepage");
           Navigator.pushReplacementNamed(context, AppRoutes.designerHomepage);
         }
@@ -82,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  //decode jwt
   Map<String, dynamic> _parseJwt(String token) {
     final parts = token.split('.');
     if (parts.length != 3) {
@@ -116,6 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 30),
+
+              //logo app
               Column(
                 children: [
                   Image.asset(
@@ -126,6 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               const SizedBox(height: 50),
+
+              //title
               const Text(
                 'ĐĂNG NHẬP',
                 style: TextStyle(
@@ -135,6 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 8),
+
+              //switch role đăng nhập
               ToggleButtons(
                 isSelected: [selectedIndex == 0, selectedIndex == 1],
                 onPressed: (index) {
@@ -166,8 +178,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 30),
+
+              //fields
               CustomTextField(
                 controller: _emailController,
                 hintText: 'Email',
@@ -181,6 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
               ),
               const SizedBox(height: 10),
+
+              //quên pass
               Row(
                 children: [
                   const Spacer(),
@@ -201,6 +216,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               const SizedBox(height: 20),
+
+              //button login
               ElevatedButton(
                 onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
@@ -217,6 +234,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         : const Text('Đăng nhập', style: TextStyle(fontSize: 16)),
               ),
               const SizedBox(height: 30),
+
+              //regis
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
