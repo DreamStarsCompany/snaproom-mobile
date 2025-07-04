@@ -32,7 +32,7 @@ class CartProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      debugPrint("Lỗi khi tải giỏ hàng: $e");
+
     }
   }
 }

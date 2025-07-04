@@ -62,7 +62,6 @@ class _DesChatContentState extends State<DesChatContent> {
   // Hàm gọi khi nhận tin nhắn realtime từ SignalR
   void _onReceiveMessage(Map<String, dynamic> message) {
     if (message['conversationId'] == conversationId) {
-      // 👉 Gắn avatar nếu không có
       final senderId = message['senderId'];
       final existingMsg = messages.firstWhere(
             (m) => m['senderId'] == senderId && m['senderAvatar'] != null,
@@ -126,7 +125,7 @@ class _DesChatContentState extends State<DesChatContent> {
     )?['senderId'];
 
     if (receiverId == null) {
-      print("❌ Không tìm thấy receiverId từ message history");
+      print("Không tìm thấy receiverId từ message history");
       return;
     }
 
@@ -135,9 +134,9 @@ class _DesChatContentState extends State<DesChatContent> {
 
     try {
       await SignalRService.sendMessage(userId, receiverId, content);
-      print("📤 Tin nhắn đã gửi qua SignalR");
+      print("Tin nhắn đã gửi qua SignalR");
     } catch (e) {
-      print("❌ Error sending message via SignalR: $e");
+      print("Error sending message via SignalR: $e");
     }
   }
 

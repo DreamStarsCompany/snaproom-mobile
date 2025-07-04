@@ -24,7 +24,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
-            // Nếu URL điều hướng đến trang thành công
             if (request.url.contains("success")) {
               Future.microtask(() {
                 Navigator.pushReplacementNamed(context, AppRoutes.customerOrder);

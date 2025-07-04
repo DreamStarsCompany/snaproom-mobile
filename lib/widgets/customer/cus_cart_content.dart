@@ -19,7 +19,7 @@ class _CusCartContentState extends State<CusCartContent> {
 
   TextEditingController addressController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  int selectedPaymentMethod = 0; // 0: COD, 1: Bank, 2: E-wallet
+  int selectedPaymentMethod = 0;
   bool hasInfoChanges = false;
 
   Map<String, dynamic>? cartData;
@@ -135,7 +135,6 @@ class _CusCartContentState extends State<CusCartContent> {
         updateTotalPrice();
       });
 
-      // ✅ Cập nhật lại cart count sau khi xóa
       final newCount = cartData!['orderDetails'].length;
       Provider.of<CartProvider>(context, listen: false).setItemCount(newCount);
 
@@ -425,7 +424,9 @@ class _CusCartContentState extends State<CusCartContent> {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () async {
+                onPressed: (cartData?['orderDetails']?.isEmpty ?? true)
+                    ? null
+                    : () async {
                   try {
                     final response = await UserService.getPaymentLink();
                     final paymentUrl = response['data'];
@@ -438,7 +439,10 @@ class _CusCartContentState extends State<CusCartContent> {
                       );
                     }
                   } catch (e) {
-                    print("Lỗi khi lấy đường link thanh toán: $e");
+                    debugPrint("Lỗi khi lấy đường link thanh toán: $e");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Không thể lấy đường link thanh toán")),
+                    );
                   }
                 },
                 icon: const Icon(Icons.payment, size: 20),

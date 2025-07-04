@@ -83,9 +83,8 @@ class CartCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Tăng/giảm hoặc khoảng trống chiếm chỗ
                     isDesign
-                        ? const SizedBox(width: 120) // giữ kích thước đều
+                        ? const SizedBox(width: 120)
                         : Container(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,

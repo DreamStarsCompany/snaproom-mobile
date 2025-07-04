@@ -66,7 +66,6 @@ class _DesOrderContentState extends State<DesOrderContent> {
   void _applyFilterAndSort() {
     String keyword = _searchController.text.trim().toLowerCase();
 
-    // Lọc theo search và status
     _filteredOrders = _orders.where((order) {
       final code = (order['id'] ?? '').toString().toLowerCase();
       final status = (order['status'] ?? '').toString();
@@ -76,7 +75,6 @@ class _DesOrderContentState extends State<DesOrderContent> {
       return matchKeyword && matchStatus;
     }).toList();
 
-    // Sắp xếp
     _filteredOrders.sort((a, b) {
       dynamic aValue = a[_sortBy];
       dynamic bValue = b[_sortBy];

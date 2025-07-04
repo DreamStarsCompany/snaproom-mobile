@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/custom_text_field.dart';
-import '../../services/user_service.dart'; // Đảm bảo import đúng đường dẫn
+import '../../services/user_service.dart';
 
 class DesignerRegisterForm extends StatefulWidget {
   const DesignerRegisterForm({super.key});
@@ -36,7 +36,6 @@ class _DesignerRegisterFormState extends State<DesignerRegisterForm> {
         applicationUrl: portfolioController.text.trim(),
       );
 
-      // Bạn có thể kiểm tra phản hồi tại đây và xử lý thành công/thất bại
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registration successful")),
       );

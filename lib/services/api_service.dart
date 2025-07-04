@@ -157,9 +157,9 @@ class ApiService {
       final statusCode = e.response?.statusCode ?? 0;
       if (statusCode == 401) {
         Fluttertoast.showToast(msg: "Hết phiên đăng nhập. Vui lòng đăng nhập lại.");
-        // TODO: chuyển hướng về login nếu cần
+
       } else {
-        Fluttertoast.showToast(msg: "Lỗi ${statusCode}: ${e.response?.data['message'] ?? 'Đã xảy ra lỗi'}");
+        // Fluttertoast.showToast(msg: "Lỗi ${statusCode}: ${e.response?.data['message'] ?? 'Đã xảy ra lỗi'}");
       }
     } else {
       Fluttertoast.showToast(msg: "Không thể kết nối đến máy chủ.");

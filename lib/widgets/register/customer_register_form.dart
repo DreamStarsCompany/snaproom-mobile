@@ -27,7 +27,6 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
 
     setState(() => isLoading = true);
 
-    // Lưu ScaffoldMessengerState tại thời điểm còn hợp lệ
     final messenger = ScaffoldMessenger.of(context);
 
     try {
@@ -39,7 +38,7 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
 
       if (!mounted) return;
 
-      debugPrint('✅ Registration response: $response');
+      debugPrint('Registration response: $response');
 
       messenger.showSnackBar(
         const SnackBar(content: Text("Registration successful")),
@@ -47,12 +46,12 @@ class _CustomerRegisterFormState extends State<CustomerRegisterForm> {
     } catch (e) {
       if (!mounted) return;
 
-      debugPrint('❌ Registration error: $e');
+      debugPrint('Registration error: $e');
 
       if (e is Exception && e.toString().contains("DioError")) {
         try {
           final error = e as dynamic;
-          debugPrint('⚠️ DioError response: ${error.response?.data}');
+          debugPrint('DioError response: ${error.response?.data}');
         } catch (_) {}
       }
 

@@ -22,7 +22,7 @@ class CustomerChat extends StatelessWidget {
       body: CusChatContent(
         conversationId: conversationId,
         senderName: senderName,
-        designerId: designerId, // ✅ truyền thêm
+        designerId: designerId,
         onMessageSent: onMessageSent,
       ),
     );

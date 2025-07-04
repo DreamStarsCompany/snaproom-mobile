@@ -3,12 +3,12 @@ import '../../widgets/designer/des_chat_content.dart';
 
 class DesignerChat extends StatelessWidget {
   final String conversationId;
-  final String senderName;  // Thêm biến này
+  final String senderName;
 
   const DesignerChat({
     super.key,
     required this.conversationId,
-    required this.senderName,   // Thêm biến này
+    required this.senderName,
   });
 
   @override

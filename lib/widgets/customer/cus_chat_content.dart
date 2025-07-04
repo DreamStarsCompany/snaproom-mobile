@@ -37,7 +37,6 @@
       super.initState();
       conversationId = widget.conversationId;
 
-      // 👇 GỌI TẠO HOẶC LẤY CONVERSATION
       if (conversationId.isEmpty && widget.designerId != null) {
         _createOrGetConversation(widget.designerId!);
       } else {
@@ -51,9 +50,9 @@
 
     Future<void> _createOrGetConversation(String designerId) async {
       try {
-        print("🎯 Gọi API tạo/lấy conversation với designerId: $designerId");
+        print("Gọi API tạo/lấy conversation với designerId: $designerId");
         final response = await UserService.getConversationWithReceiver(designerId);
-        print("🎯 Response trả về: $response");
+        print("Response trả về: $response");
 
         final newId = response['data']?.toString();
 
@@ -65,10 +64,10 @@
           await _initUserAndSignalR();
           await fetchConversation();
         } else {
-          print("❌ Không thể lấy được conversation từ designerId: $designerId");
+          print("Không thể lấy được conversation từ designerId: $designerId");
         }
       } catch (e) {
-        print("❌ Lỗi khi tạo/lấy conversation: $e");
+        print("Lỗi khi tạo/lấy conversation: $e");
       }
     }
 
@@ -95,7 +94,6 @@
     // Hàm gọi khi nhận tin nhắn realtime từ SignalR
     void _onReceiveMessage(Map<String, dynamic> message) {
       if (message['conversationId'] == conversationId) {
-        // 👉 Gắn avatar nếu không có
         final senderId = message['senderId'];
         final existingMsg = messages.firstWhere(
           (m) => m['senderId'] == senderId && m['senderAvatar'] != null,
@@ -160,12 +158,12 @@
 
       final receiverId = receiverMsg['senderId']?.toString();
       if (receiverId == null || receiverId.isEmpty) {
-        print("❌ Không tìm thấy receiverId từ message history");
+        print("Không tìm thấy receiverId từ message history");
         return;
       }
 
       if (receiverId == null) {
-        print("❌ Không tìm thấy receiverId từ message history");
+        print("Không tìm thấy receiverId từ message history");
         return;
       }
 
@@ -174,9 +172,9 @@
 
       try {
         await SignalRService.sendMessage(userId, receiverId, content);
-        print("📤 Tin nhắn đã gửi qua SignalR");
+        print("Tin nhắn đã gửi qua SignalR");
       } catch (e) {
-        print("❌ Error sending message via SignalR: $e");
+        print("Error sending message via SignalR: $e");
       }
     }
 
