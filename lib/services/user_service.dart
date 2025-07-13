@@ -7,6 +7,16 @@ import '../config.dart';
 import 'api_service.dart';
 
 class UserService {
+
+static Future<dynamic> updateOrderStatus(String orderId, int status) async {
+    final response = await ApiService.get("/api/orders/$orderId/$status");
+
+    if (response == null) {
+      throw Exception('Empty response from API');
+    }
+    return response;
+  }
+
   static Future<dynamic> loginDesigner(String email, String password) async {
     return await ApiService.post("/api/auth/designer/login", {
       "email": email,
@@ -265,7 +275,93 @@ class UserService {
     );
   }
 
+  static Future<dynamic> updateFurnitureActive({
+    required String furnitureId,
+    required bool isActive,
+  }) async {
+    return await ApiService.putMultipart(
+      "/api/furnitures/$furnitureId",
+      queryParams: {
+        "Active": isActive.toString(),
+      },
+      fields: {},
+      files: {},
+    );
+  }
 
+  static Future<dynamic> updateDesignActive({
+    required String designId,
+    required bool isActive,
+  }) async {
+    return await ApiService.putMultipart(
+      "/api/designs/$designId",
+      queryParams: {
+        "Active": isActive.toString(),
+      },
+      fields: {},
+      files: {},
+    );
+  }
+
+  static Future<dynamic> updateProduct({
+    required String productId,
+    required String name,
+    required double price,
+    required String description,
+  }) async {
+    return await ApiService.putWithQuery("/api/furnitures/$productId", queryParams: {
+      "Name": name,
+      "Price": price.toString(),
+      "Description": description,
+    });
+  }
+
+  static Future<dynamic> updateDesign({
+    required String designId,
+    required String name,
+    required double price,
+    required String description,
+  }) async {
+    return await ApiService.putWithQuery("/api/designs/$designId", queryParams: {
+      "Name": name,
+      "Price": price.toString(),
+      "Description": description,
+    });
+  }
+
+
+static Future<dynamic> getNewProductsAPI() async {
+    return await ApiService.get("/api/dashboard/new-products");
+  }
+
+  static Future<dynamic> getTopProductsAPI() async {
+    return await ApiService.get("/api/dashboard/top-products");
+  }
+
+  static Future<dynamic> getTopProductsWithReviewsAPI() async {
+    return await ApiService.get("/api/dashboard/top-products-reviews");
+  }
+
+  static Future<dynamic> getDesignerRevenueByDayAPI(int month, int year) async {
+    return await ApiService.get(
+      "/api/dashboard/designer/revenue-by-day",
+      params: {"month": month.toString(), "year": year.toString()},
+    );
+  }
+
+static Future<dynamic> getAllOrdersByDesAPI({
+
+  int pageNumber = -1,
+  int pageSize = -1,
+}) async {
+  return await ApiService.get(
+    "/api/designer/orders",
+    params: {
+      "pageNumber": pageNumber.toString(),
+      "pageSize": pageSize.toString(),
+    },
+  );
+}
 }
 
 

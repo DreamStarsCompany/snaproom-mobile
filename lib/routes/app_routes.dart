@@ -25,6 +25,8 @@ import '../screens/designer/designer_chat_list.dart';
 import '../screens/designer/designer_chat.dart';
 import '../screens/customer/customer_designers.dart';
 import '../screens/customer/customer_des_product.dart';
+import '../screens/designer/designer_fur_detail.dart';
+import '../screens/designer/designer_des_detail.dart';
 
 
 class AppRoutes {
@@ -54,6 +56,8 @@ class AppRoutes {
   static const String desChatDetail = '/desChatDetail';
   static const String customerDesigners = '/customerDesigners';
   static const String customerDesignerProduct = '/customerDesignerProduct';
+  static const String designerDesDetail = '/designerDesDetail';
+  static const String designerFurDetail = '/designerFurDetail';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -71,6 +75,14 @@ class AppRoutes {
 
       case designerProfile:
         return MaterialPageRoute(builder: (_) => const DesignerProfile());
+
+        case designerDesDetail:
+        final product = settings.arguments as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(builder: (_) => DesignerDesDetail(product: product),);
+
+        case designerFurDetail:
+        final product = settings.arguments as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(builder: (_) => DesignerFurDetail(product: product),);
 
       case customerProfile:
         return MaterialPageRoute(builder: (_) => const CustomerProfile());
